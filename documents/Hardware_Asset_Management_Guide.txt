@@ -1,0 +1,344 @@
+================================================================
+TECHCORE SOLUTIONS - HARDWARE AND ASSET MANAGEMENT GUIDE
+Document Version: 1.1 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document covers the procurement, deployment, maintenance, and disposal of all IT hardware assets at TechCore Solutions. All IT staff must follow these procedures to ensure accurate asset tracking and efficient hardware management.
+
+2. APPROVED HARDWARE CATALOGUE
+--------------------------------
+The following hardware is approved for use at TechCore Solutions. All purchases must be from this approved list unless specifically authorised by the IT Manager.
+
+Laptops:
+Standard User Laptop: Dell Latitude 5540
+- Processor: Intel Core i5 13th Generation
+- RAM: 16GB DDR5
+- Storage: 256GB SSD
+- Display: 15.6 inch FHD
+- Operating System: Windows 11 Pro
+- Warranty: 3 years ProSupport
+
+Power User Laptop: Dell Latitude 5540 (Upgraded)
+- Processor: Intel Core i7 13th Generation
+- RAM: 32GB DDR5
+- Storage: 512GB SSD
+- Display: 15.6 inch FHD
+- Operating System: Windows 11 Pro
+- Warranty: 3 years ProSupport
+
+Executive Laptop: Dell XPS 13
+- Processor: Intel Core i7 13th Generation
+- RAM: 32GB
+- Storage: 1TB SSD
+- Display: 13.4 inch FHD+
+- Operating System: Windows 11 Pro
+- Warranty: 3 years ProSupport
+
+Developer Laptop: MacBook Pro 14 inch
+- Processor: Apple M3 Pro
+- RAM: 18GB
+- Storage: 512GB SSD
+- Operating System: macOS Sonoma
+- Warranty: AppleCare+ 3 years
+
+Desktops:
+Standard Desktop: Dell OptiPlex 7010
+- Processor: Intel Core i5 13th Generation
+- RAM: 16GB
+- Storage: 256GB SSD
+- Operating System: Windows 11 Pro
+- Warranty: 3 years ProSupport
+
+Monitors:
+Standard Monitor: Dell P2422H
+- Size: 24 inch
+- Resolution: 1920x1080 FHD
+- Connectivity: HDMI, DisplayPort, USB
+
+Dual Monitor Setup: Dell U2722D
+- Size: 27 inch
+- Resolution: 2560x1440 QHD
+- USB-C hub built in
+
+Printers:
+Office Printer: HP LaserJet Pro MFP 4301fdw
+- Type: Monochrome laser multifunction
+- Functions: Print, scan, copy, fax
+- Connectivity: Network, Wi-Fi, USB
+- Monthly duty cycle: 80,000 pages
+
+Colour Printer: HP Color LaserJet Pro MFP 4301fdw
+- Type: Colour laser multifunction
+- Functions: Print, scan, copy
+- Connectivity: Network, Wi-Fi, USB
+- Monthly duty cycle: 50,000 pages
+
+3. ASSET TAGGING
+-----------------
+Every IT asset must be tagged with a unique asset tag before deployment.
+
+Asset Tag Format:
+TC-[Category]-[Year]-[Sequential Number]
+Examples:
+- TC-LT-2025-001 (Laptop purchased in 2025, first one)
+- TC-DT-2025-015 (Desktop purchased in 2025, fifteenth one)
+- TC-MN-2025-032 (Monitor purchased in 2025, thirty-second one)
+- TC-PR-2025-007 (Printer purchased in 2025, seventh one)
+
+Category Codes:
+LT: Laptop
+DT: Desktop
+MN: Monitor
+PR: Printer
+SV: Server
+SW: Network Switch
+RT: Router
+FW: Firewall
+AP: Access Point
+PH: IP Phone
+TB: Tablet
+MB: Mobile Phone
+
+Applying Asset Tags:
+1. Print the asset tag label from the asset management system
+2. Clean the surface of the device before applying the label
+3. Apply the label to the bottom or back of the device in a visible location
+4. Do not cover serial number or ventilation areas
+5. Take a photo of the device with the asset tag visible
+6. Upload the photo to the asset management system
+
+4. ASSET MANAGEMENT SYSTEM
+----------------------------
+TechCore Solutions uses Asset Panda as the asset management system.
+Access: assets.techcore.com
+Login: Use your Microsoft 365 credentials
+
+Recording a New Asset:
+1. Log into assets.techcore.com
+2. Click Add Asset
+3. Select the asset category
+4. Fill in the following mandatory fields:
+   - Asset Tag Number
+   - Asset Type (Laptop, Desktop, Monitor, etc.)
+   - Make and Model
+   - Serial Number
+   - Purchase Date
+   - Purchase Price
+   - Warranty Expiry Date
+   - Supplier Name
+   - Invoice Number
+5. Upload a photo of the device
+6. Upload a copy of the purchase invoice
+7. Click Save
+
+Assigning an Asset to a User:
+1. Find the asset in the system
+2. Click Assign
+3. Search for the employee by name or employee ID
+4. Select the employee
+5. Enter the assignment date
+6. Note any accessories assigned with the device (charger, bag, mouse, keyboard)
+7. Click Save
+8. System will automatically send an assignment notification to the employee
+
+Asset Status Options:
+Available: Asset is in IT store ready to be deployed
+Assigned: Asset is assigned to a user or location
+Under Repair: Asset is with repair team or sent to vendor
+Decommissioned: Asset is retired and awaiting disposal
+Disposed: Asset has been securely disposed
+
+5. LAPTOP DEPLOYMENT PROCESS
+------------------------------
+Step 1 - Receive and Inspect:
+1. Inspect packaging for damage on arrival
+2. Verify model and specifications match the purchase order
+3. Check serial number matches the delivery note
+4. Record the serial number in the asset management system
+5. Apply the asset tag label
+
+Step 2 - Build and Configure:
+1. Connect laptop to the IT build network
+2. Power on and complete initial Windows setup
+3. Connect to the internet
+4. The laptop will automatically download Windows updates
+5. Install Windows 11 Pro licence if not pre-installed
+6. Enable BitLocker encryption:
+   - Open Control Panel then System and Security then BitLocker Drive Encryption
+   - Click Turn on BitLocker
+   - Save the recovery key to Active Directory
+   - Start encryption
+7. Enrol in Microsoft Intune:
+   - Go to Settings then Accounts then Access work or school
+   - Click Connect and enter the user's email address
+   - Follow enrolment prompts
+8. Wait for Intune policies to apply (15 to 30 minutes)
+9. Verify all required software is installed via Intune
+
+Step 3 - Quality Check:
+1. Verify all ports are working (USB, HDMI, headphone jack)
+2. Verify Wi-Fi and Bluetooth connectivity
+3. Verify camera and microphone work
+4. Verify battery charges properly
+5. Run a quick performance test
+6. Verify BitLocker is enabled
+7. Verify Intune shows device as compliant
+8. Verify CrowdStrike sensor is running
+
+Step 4 - Assign and Deliver:
+1. Assign the asset to the user in the asset management system
+2. Prepare the IT welcome document with login details
+3. Deliver to the user on or before their start date
+4. Walk the user through the initial login process
+5. Get user signature on the asset assignment form
+
+6. PRINTER MANAGEMENT
+----------------------
+Adding a Network Printer:
+1. Connect the printer to the network via cable or Wi-Fi
+2. Assign a static IP address to the printer:
+   - Log into the printer web interface (default IP shown on printer screen)
+   - Navigate to Network Settings
+   - Set a static IP in the range 192.168.10.100 to 192.168.10.150
+   - Save settings and restart printer
+3. Register the IP in DNS:
+   - Open DNS Manager on the domain controller
+   - Add an A record for the printer: printer-floor2.techcore.local
+4. Create a printer object in Active Directory:
+   - Open Print Management
+   - Add a new printer using the IP address
+   - Name the printer clearly: FL2-HP-LaserJet-001
+5. Deploy the printer to users via Group Policy:
+   - Open Group Policy Management
+   - Create or edit a GPO for the relevant OU
+   - Navigate to User Configuration then Preferences then Printers
+   - Add the printer with the shared path
+6. Test printing from a user account
+
+Printer Troubleshooting:
+Printer shows Offline:
+1. Check the printer is powered on
+2. Check network cable is connected or Wi-Fi is active
+3. Print a configuration page from the printer itself
+4. Verify the IP address on the configuration page matches DNS
+5. Try pinging the printer: ping printer-floor2.techcore.local
+6. Restart the Print Spooler service on the user's computer:
+   - Open Services
+   - Find Print Spooler
+   - Right-click and select Restart
+7. Remove and re-add the printer on the user's computer
+
+Print Queue Stuck:
+1. Open Control Panel then Devices and Printers
+2. Double-click the printer
+3. Click See what's printing
+4. Select all jobs and click Cancel
+5. If jobs cannot be cancelled, restart Print Spooler service
+6. Navigate to C:\Windows\System32\spool\PRINTERS
+7. Delete all files in this folder (not the folder itself)
+8. Start Print Spooler service again
+9. Try printing again
+
+7. HARDWARE REPAIR AND MAINTENANCE
+------------------------------------
+Warranty Repairs:
+1. Check warranty status in the asset management system
+2. If under warranty, contact the vendor support:
+   - Dell: 800-915-3355 or dell.com/support
+   - HP: 800-752-0900 or hp.com/support
+   - Apple: 800-275-2273 or apple.com/support
+3. Create a case with the vendor
+4. Note the case reference number in the asset management system
+5. Update asset status to Under Repair
+6. Arrange collection or drop-off as advised by vendor
+
+Out of Warranty Repairs:
+1. Obtain a repair quote from the approved repair vendor
+2. If repair cost exceeds 50% of replacement cost, recommend replacement
+3. Get IT Manager approval for repairs over AED 500
+4. Update asset status to Under Repair
+5. Track the repair progress and expected completion date
+
+Preventive Maintenance Schedule:
+Monthly:
+- Clean all office printers (exterior and paper trays)
+- Check toner and paper levels in all printers
+- Review asset management system for assets due warranty expiry
+
+Quarterly:
+- Physical inspection of all IT equipment in the server room
+- Clean server room equipment (dust removal from servers and switches)
+- Check UPS battery health in server room
+- Review and update asset inventory
+
+Annually:
+- Full physical audit of all IT assets
+- Compare physical inventory with asset management system records
+- Identify lost or unaccounted assets
+- Plan hardware refresh for assets over 4 years old
+
+8. HARDWARE DISPOSAL
+---------------------
+All hardware disposal must follow the secure disposal process to protect company data and comply with environmental regulations.
+
+Data Sanitisation:
+Before any device is disposed of, all data must be securely erased:
+
+For Windows Laptops and Desktops:
+1. Decrypt BitLocker by turning off BitLocker in Control Panel
+2. Use DBAN (Darik's Boot and Nuke) to perform a 3-pass wipe
+3. Alternatively use the device manufacturer's certified data erasure tool
+4. Document the sanitisation with a certificate of data erasure
+
+For Mobile Devices:
+1. Remove the device from Intune using the Wipe remote action
+2. Perform a factory reset on the device
+3. Remove the SIM card and destroy it
+
+For Servers and Storage:
+1. Degauss magnetic hard drives using an approved degausser
+2. For SSDs perform secure erase using manufacturer tools
+3. For highly sensitive data physically shred the storage media
+4. Obtain a certificate of destruction
+
+Environmental Disposal:
+TechCore Solutions is committed to responsible e-waste disposal.
+All decommissioned equipment must be disposed of through the approved e-waste vendor:
+GreenTech Recycling UAE
+Contact: recycling@greentech-uae.com
+Phone: +971 4 123 4567
+
+Collection Process:
+1. Accumulate decommissioned equipment in the IT disposal area
+2. Contact GreenTech when a minimum of 10 items are ready
+3. GreenTech will collect within 5 business days
+4. Obtain a collection certificate confirming environmentally responsible disposal
+5. File the certificate with finance for CSR reporting purposes
+
+9. ASSET AUDIT PROCESS
+------------------------
+Annual Asset Audit:
+1. Export the full asset register from the asset management system
+2. Physically locate every asset on the register
+3. Verify asset tag, serial number, and condition
+4. Update location information if the asset has moved
+5. Mark any assets that cannot be located as Missing
+6. Report missing assets to IT Manager and Finance
+7. Write off confirmed lost assets with Finance approval
+8. Update asset management system with audit completion date
+
+Missing Asset Report:
+If an asset cannot be located during the audit:
+1. Check with the assigned user and their manager
+2. Check if the asset was moved to a different location
+3. Check if the asset was sent for repair without being logged
+4. If still unlocated after investigation, raise a formal missing asset report
+5. HR may be involved if suspected theft
+6. Report to management and Finance for write-off approval
+
+================================================================
+END OF DOCUMENT
+For asset management queries contact: helpdesk@techcore.com | Ext: 1001
+================================================================

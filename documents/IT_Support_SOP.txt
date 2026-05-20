@@ -1,0 +1,248 @@
+================================================================
+TECHCORE SOLUTIONS - IT SUPPORT STANDARD OPERATING PROCEDURES
+Document Version: 2.1 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document outlines the Standard Operating Procedures for the IT Support team at TechCore Solutions. All IT staff must follow these procedures when handling support requests, incidents, and service requests.
+
+2. TICKETING SYSTEM
+-------------------
+All IT support requests must be logged in the ticketing system (ServiceNow) before any action is taken.
+
+Priority Levels:
+- P1 Critical: Complete system outage affecting all users. Response time: 15 minutes. Resolution time: 4 hours.
+- P2 High: Major functionality loss affecting a department. Response time: 30 minutes. Resolution time: 8 hours.
+- P3 Medium: Single user affected with workaround available. Response time: 2 hours. Resolution time: 24 hours.
+- P4 Low: Minor issue or general enquiry. Response time: 4 hours. Resolution time: 72 hours.
+
+Ticket Creation Steps:
+1. Log into ServiceNow at helpdesk.techcore.com
+2. Click New Ticket
+3. Select category: Hardware, Software, Network, or Account
+4. Enter user name, department, contact number, and issue description
+5. Assign priority level based on impact
+6. Assign to appropriate team or technician
+7. Send acknowledgement email to user with ticket number
+
+3. PASSWORD RESET PROCEDURES
+-----------------------------
+Active Directory Password Reset:
+1. Open Active Directory Users and Computers (ADUC)
+2. Search for the user account using their full name or username
+3. Right-click the user account and select Reset Password
+4. Enter a temporary password following the password policy: minimum 8 characters, one uppercase, one lowercase, one number, one special character
+5. Check the box User must change password at next logon
+6. Click OK
+7. Communicate the temporary password to the user via phone only, never via email
+8. Update the ticket with resolution notes
+
+Microsoft 365 Password Reset:
+1. Log into Microsoft 365 Admin Centre at admin.microsoft.com
+2. Navigate to Users then Active Users
+3. Search for the user
+4. Click Reset Password
+5. Select Auto-generate password or enter a custom password
+6. Check Send password in email to my email address
+7. Click Reset Password
+8. Call the user to provide the new password
+
+Self-Service Password Reset (SSPR):
+Users can reset their own passwords by visiting aka.ms/sspr
+They must have previously registered their mobile number and alternate email in the system.
+
+4. NEW USER ONBOARDING
+-----------------------
+When a new employee joins TechCore Solutions, the following IT tasks must be completed on or before their first day.
+
+Step 1 - Create Active Directory Account:
+1. Open ADUC
+2. Navigate to the correct Organisational Unit (OU) based on department
+3. Right-click and select New then User
+4. Enter First Name, Last Name, and User Logon Name (firstname.lastname format)
+5. Set temporary password and check User must change password at next logon
+6. Add user to appropriate security groups based on their role
+7. Set account expiry if the employee is a contractor
+
+Step 2 - Assign Microsoft 365 Licence:
+1. Log into Microsoft 365 Admin Centre
+2. Navigate to Users then Active Users
+3. Find the newly created user
+4. Click Manage Product Licences
+5. Assign appropriate licence based on role: Business Basic, Business Standard, or E3
+6. Click Save Changes
+
+Step 3 - Configure Email:
+1. Email is automatically created when M365 licence is assigned
+2. Add user to relevant distribution groups for their department
+3. Set up email signature template using the company signature tool
+4. Create shared mailbox access if required for the role
+
+Step 4 - Set Up Device:
+1. Collect device from IT store
+2. Enrol device in Microsoft Intune using the company enrolment URL
+3. Push required software policies through Intune
+4. Install department-specific applications
+5. Configure VPN client with user credentials
+6. Label device with asset tag and record in asset management system
+
+Step 5 - Provide Access:
+1. Grant access to required shared drives based on department
+2. Set up SharePoint site access
+3. Add to Teams channels relevant to their role
+4. Provide access to any business applications required
+
+Step 6 - Welcome Kit:
+1. Prepare IT welcome document with login credentials
+2. Include Wi-Fi password for office network
+3. Provide IT helpdesk contact number: extension 1001
+4. Email the IT welcome pack to the user's personal email one day before joining
+
+5. HARDWARE TROUBLESHOOTING
+----------------------------
+Laptop Not Turning On:
+1. Check if the power cable is firmly connected
+2. Try a different power socket
+3. Hold the power button for 30 seconds to perform a hard reset
+4. Remove the battery if removable, hold power button for 30 seconds, reinsert battery and try again
+5. Connect to external monitor to check if the screen is the issue
+6. If none of the above works, escalate to Level 2 for hardware inspection
+
+Laptop Running Slow:
+1. Check Task Manager (Ctrl+Shift+Esc) for high CPU, Memory, or Disk usage
+2. Identify the process consuming most resources
+3. Check available disk space - if below 10% free, clean up temporary files
+4. Run Disk Cleanup tool
+5. Check for Windows updates and install if pending
+6. Scan for malware using Microsoft Defender
+7. Disable unnecessary startup programs through Task Manager then Startup tab
+8. If RAM is below 8GB and user runs heavy applications, recommend RAM upgrade
+
+Printer Not Printing:
+1. Check printer is powered on and connected to network
+2. Verify the printer shows Online status in Windows
+3. Clear the print queue: go to Services, restart Print Spooler
+4. Delete stuck jobs from the print queue
+5. Remove and re-add the printer
+6. Print a test page from the printer settings
+7. Check ink or toner levels
+8. If networked printer, verify the printer IP address has not changed
+
+Blue Screen of Death (BSOD):
+1. Note the error code displayed on the blue screen
+2. Restart the computer
+3. Check Event Viewer for error details under Windows Logs then System
+4. Run Windows Memory Diagnostic to check for RAM issues
+5. Check for recent driver or software updates that may have caused the issue
+6. If recurring, back up data immediately and escalate to Level 2
+
+6. SOFTWARE TROUBLESHOOTING
+-----------------------------
+Microsoft Outlook Not Opening:
+1. Close Outlook completely using Task Manager if needed
+2. Run Outlook in safe mode: press Windows+R, type outlook.exe /safe, press Enter
+3. If it opens in safe mode, disable add-ins one by one to identify the faulty one
+4. Repair Office installation through Control Panel then Programs
+5. Create a new Outlook profile if the existing profile is corrupted
+6. Check if the issue is account-specific or affects all users
+
+Microsoft Teams Issues:
+1. For sign-in issues, clear Teams cache by navigating to %AppData%\Microsoft\Teams and deleting contents
+2. For audio or video issues, check device settings in Teams Settings then Devices
+3. For performance issues, clear the Teams cache as above and restart Teams
+4. For meeting join issues, try joining via browser at teams.microsoft.com
+5. Check Microsoft 365 service health at admin.microsoft.com
+
+Application Crashing:
+1. Check Event Viewer for application error details
+2. Update the application to the latest version
+3. Repair the application through Control Panel
+4. Check if the issue is user-specific or affects all users
+5. Uninstall and reinstall if repair does not resolve the issue
+6. Check for conflicting software or recent changes
+
+7. EMAIL TROUBLESHOOTING
+--------------------------
+User Not Receiving Emails:
+1. Check if the sender's emails are going to Junk folder
+2. Check mailbox size - if full, emails will be rejected
+3. Verify the email address is spelled correctly by the sender
+4. Check email forwarding rules that might be redirecting emails
+5. Check transport rules in Exchange Admin Centre that might be blocking emails
+6. Check Mimecast logs if Mimecast is deployed - emails might be quarantined
+
+User Cannot Send Emails:
+1. Check the user's account is not locked or disabled
+2. Verify the mailbox has not exceeded send limits
+3. Check if the recipient's email address is valid
+4. Look for bounce-back messages which contain error codes explaining the issue
+5. Check outbound transport rules in Exchange Admin Centre
+6. Verify SMTP settings if using a third-party email client
+
+8. ESCALATION PROCEDURES
+--------------------------
+When to Escalate to Level 2:
+- Issue cannot be resolved within the P-level response time
+- Issue requires server access or backend changes
+- Issue affects multiple users simultaneously
+- Security incident or suspected breach
+- Hardware failure requiring replacement
+
+When to Escalate to Level 3:
+- Server outages
+- Network infrastructure issues
+- Active Directory domain issues
+- Security breaches
+- Issues requiring vendor support
+
+Escalation Process:
+1. Update the ticket with all troubleshooting steps already taken
+2. Note the exact error messages encountered
+3. Contact Level 2 via phone for P1 and P2 tickets
+4. For P3 and P4, reassign ticket to Level 2 queue in ServiceNow
+5. Inform the user of the escalation and provide a new expected resolution time
+
+9. SECURITY PROCEDURES
+------------------------
+Reporting a Security Incident:
+1. Do not attempt to investigate or fix the issue yourself
+2. Immediately call the IT Security team on extension 1002
+3. Do not turn off or disconnect the affected device unless instructed
+4. Do not discuss the incident with non-IT staff
+5. Document everything you observed including time and nature of the incident
+
+Suspected Phishing Email:
+1. Do not click any links or open attachments
+2. Report the email using the Phishing Report button in Outlook
+3. If the user has already clicked a link, immediately call IT Security
+4. IT Security will investigate and may need to isolate the device
+
+Malware Detection:
+1. Immediately disconnect the device from the network by unplugging the network cable or disabling Wi-Fi
+2. Do not log off or shut down the device
+3. Call IT Security immediately on extension 1002
+4. Preserve the device for forensic investigation
+
+10. ASSET MANAGEMENT
+---------------------
+All IT assets must be recorded in the asset management system.
+
+Recording a New Asset:
+1. Log into the asset management portal at assets.techcore.com
+2. Click Add New Asset
+3. Enter asset type, make, model, serial number, and asset tag number
+4. Assign to user or location
+5. Record purchase date and warranty expiry date
+
+Retiring an Asset:
+1. Back up any data from the device
+2. Wipe the device using approved data sanitisation tool
+3. Update the asset management system status to Decommissioned
+4. Remove from Active Directory and Microsoft Intune
+5. Store device in the IT disposal area for recycling
+
+================================================================
+END OF DOCUMENT
+For queries contact IT Helpdesk: helpdesk@techcore.com | Ext: 1001
+================================================================

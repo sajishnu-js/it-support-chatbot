@@ -1,0 +1,312 @@
+================================================================
+TECHCORE SOLUTIONS - USER ONBOARDING AND OFFBOARDING GUIDE
+Document Version: 1.2 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document covers the complete IT process for onboarding new employees and offboarding departing employees at TechCore Solutions. All steps must be completed in sequence and documented in the IT ticketing system.
+
+2. PRE-ONBOARDING CHECKLIST
+-----------------------------
+HR must notify IT at least 5 working days before the employee's start date by submitting an onboarding request form. The form must include:
+- Full name of new employee
+- Job title and department
+- Direct manager name
+- Start date
+- Office location
+- Whether the employee is permanent or contractor
+- List of systems and applications required for the role
+
+IT will use this information to prepare all accounts and equipment before the start date.
+
+3. ACTIVE DIRECTORY ACCOUNT CREATION
+--------------------------------------
+Step 1 - Create the User Account:
+1. Log into the Domain Controller using IT admin credentials
+2. Open Active Directory Users and Computers
+3. Navigate to the correct Organisational Unit:
+   - IT Department: OU=IT,OU=Departments,DC=techcore,DC=com
+   - Finance Department: OU=Finance,OU=Departments,DC=techcore,DC=com
+   - HR Department: OU=HR,OU=Departments,DC=techcore,DC=com
+   - Operations Department: OU=Operations,OU=Departments,DC=techcore,DC=com
+   - Sales Department: OU=Sales,OU=Departments,DC=techcore,DC=com
+4. Right-click the OU and select New then User
+5. Enter the following information:
+   - First Name: as per HR form
+   - Last Name: as per HR form
+   - User Logon Name: firstname.lastname (example: john.smith)
+   - Display Name: Full Name
+6. Set password to TechCore@2025! and check User must change password at next logon
+7. Uncheck Account is disabled to activate the account
+8. Click Finish
+
+Step 2 - Configure Account Properties:
+1. Double-click the newly created user
+2. In the General tab: enter job title, department, and office
+3. In the Organisation tab: enter manager's name
+4. In the Account tab: set account expiry date if contractor
+5. In the Profile tab: set home drive if required
+
+Step 3 - Add to Security Groups:
+All users must be added to these base groups:
+- All-Staff: gives access to shared company resources
+- VPN-Users: allows VPN connection
+- Microsoft365-Users: syncs account to Azure AD
+
+Department-specific groups:
+- IT-Team: for IT department staff
+- Finance-Team: for finance department staff
+- HR-Team: for HR department staff - includes access to HR systems
+- Sales-Team: for sales department staff - includes CRM access
+- Managers-Group: for all managers - includes additional reporting access
+
+4. MICROSOFT 365 SETUP
+------------------------
+Azure AD Sync:
+Azure AD Connect syncs Active Directory accounts to Azure AD automatically every 30 minutes. After creating the AD account, wait up to 30 minutes for it to appear in Microsoft 365 Admin Centre. For urgent cases, force a sync by running the following on the Azure AD Connect server:
+- Open PowerShell as Administrator
+- Type: Start-ADSyncSyncCycle -PolicyType Delta
+- Press Enter and wait for sync to complete
+
+Assign Microsoft 365 Licence:
+1. Log into admin.microsoft.com with IT admin credentials
+2. Navigate to Users then Active Users
+3. Search for the new user account
+4. Click on the user and then click Licences and Apps
+5. Assign the appropriate licence based on role:
+   - Microsoft 365 Business Basic: for general staff
+   - Microsoft 365 Business Standard: for managers and staff requiring Office desktop apps
+   - Microsoft 365 E3: for IT staff and senior management
+6. Click Save Changes
+7. Note that email creation can take up to 15 minutes after licence assignment
+
+Configure Mailbox Settings:
+1. Once mailbox is created, go to Exchange Admin Centre at admin.exchange.microsoft.com
+2. Navigate to Recipients then Mailboxes
+3. Find the new user mailbox
+4. Set mailbox size limit based on role:
+   - Standard staff: 50GB
+   - Managers: 100GB
+   - Executives: Unlimited
+5. Add user to relevant distribution groups:
+   - all-staff@techcore.com: all employees
+   - department@techcore.com: relevant department list
+   - office-location@techcore.com: relevant office location list
+
+Set Up Email Signature:
+1. Log into the signature management tool at signatures.techcore.com
+2. Select the new user
+3. Choose the standard TechCore email signature template
+4. Enter job title and phone number
+5. The signature will be automatically applied to all outgoing emails
+
+5. DEVICE SETUP
+----------------
+Laptop Build Process:
+1. Collect a laptop from the IT store - record the asset tag number
+2. Connect to the IT build network using the build VLAN cable
+3. The device will automatically receive the standard Windows 11 image via WDS
+4. Build process takes approximately 45 minutes
+5. After build, enrol in Microsoft Intune:
+   - Go to Settings then Accounts then Access Work or School
+   - Click Connect and enter the user's Microsoft 365 email address
+   - Follow the prompts to complete enrolment
+   - Wait for Intune policies to apply (approximately 15 minutes)
+
+Software Deployed via Intune (Automatic):
+The following software is automatically pushed to all enrolled devices:
+- Microsoft 365 Apps (Word, Excel, PowerPoint, Outlook, Teams)
+- Microsoft Defender Antivirus
+- CrowdStrike Falcon sensor
+- VPN client (GlobalProtect)
+- Google Chrome
+- Adobe Acrobat Reader
+- 7-Zip
+
+Additional Software by Role:
+IT Staff:
+- PuTTY SSH client
+- WireShark network analyser
+- Microsoft RSAT tools
+- Azure AD PowerShell module
+
+Finance Staff:
+- Sage accounting software
+- Adobe Acrobat Pro
+
+Design Staff:
+- Adobe Creative Cloud
+- AutoCAD
+
+Configure Local Admin:
+For IT staff, enable local administrator rights through Intune compliance policy.
+For all other staff, standard user accounts only - no local admin rights.
+
+Mobile Device Setup:
+For employees requiring mobile device management:
+1. Install Microsoft Intune Company Portal from app store on the device
+2. Sign in with company Microsoft 365 account
+3. Follow enrolment steps
+4. Device will receive company email, Teams, and required apps
+5. Confirm with user that email and Teams are working
+
+6. SYSTEM ACCESS PROVISIONING
+-------------------------------
+SharePoint Access:
+1. Log into SharePoint Admin Centre at admin.sharepoint.com
+2. Navigate to Sites and find relevant department site
+3. Add user to the appropriate permission group:
+   - Members: can read and edit content
+   - Visitors: read-only access
+   - Owners: full control (managers only)
+
+Business Application Access:
+CRM System (Salesforce):
+1. Log into Salesforce with admin credentials
+2. Navigate to Setup then Users
+3. Click New User
+4. Enter name, email, username (must be unique email format), and role
+5. Assign appropriate profile based on role
+6. Click Save and the user will receive an activation email
+
+Finance System (Sage):
+1. Contact Finance Manager to request Sage user creation
+2. IT provides the user's email and role
+3. Finance Manager creates the account and notifies IT when complete
+
+HR System (BambooHR):
+1. HR creates the account in BambooHR directly
+2. IT does not have admin access to this system
+3. Contact HR team for any BambooHR issues
+
+7. WELCOME COMMUNICATION
+--------------------------
+On the day before the employee starts, send them an email to their personal email address containing:
+- Welcome message from IT
+- Laptop asset tag and serial number
+- Username: firstname.lastname
+- Temporary password: TechCore@2025! (they must change on first login)
+- VPN server address: vpn.techcore.com
+- IT Helpdesk contact: helpdesk@techcore.com or extension 1001
+- Wi-Fi details: Network TechCore-Corporate, password available from IT helpdesk
+- Microsoft 365 login URL: office.com
+- Link to IT acceptable use policy
+
+8. FIRST DAY SUPPORT
+---------------------
+IT must be available on the employee's first day to assist with:
+- First login and password change
+- Setting up multi-factor authentication (MFA):
+  1. User visits aka.ms/mfasetup
+  2. Sign in with Microsoft 365 credentials
+  3. Choose authentication method: Microsoft Authenticator app (recommended) or phone number
+  4. Follow setup wizard to complete MFA registration
+- Email and Teams configuration
+- VPN connectivity test
+- Confirming all required applications are installed
+- Any initial access issues
+
+9. OFFBOARDING PROCEDURES
+--------------------------
+When an employee leaves TechCore Solutions, IT must complete all offboarding tasks on or before the last working day.
+
+HR must notify IT at least 5 working days before the leaving date by submitting an offboarding request form including:
+- Employee name and username
+- Last working day
+- Whether data should be backed up
+- Successor or manager who should receive access to emails and files
+
+Offboarding Checklist:
+
+Day of Leaving:
+
+Step 1 - Disable Active Directory Account:
+1. Open ADUC
+2. Find the user account
+3. Right-click and select Disable Account
+4. Do NOT delete the account immediately - wait 30 days in case access is needed
+5. Move account to the Disabled Users OU
+
+Step 2 - Revoke Microsoft 365 Access:
+1. Log into admin.microsoft.com
+2. Find the user account
+3. Click Sign out of all sessions to immediately terminate all active sessions
+4. Remove Microsoft 365 licence assignment
+5. Set account to block sign-in
+
+Step 3 - Set Up Email Forwarding or Auto-Reply:
+1. In Exchange Admin Centre, set up an auto-reply on the mailbox:
+   "This employee has left TechCore Solutions. Please contact department@techcore.com for assistance."
+2. If required by manager, set up email forwarding to the manager's mailbox
+3. Forward is typically set for 30 days
+
+Step 4 - Preserve Mailbox:
+1. Do not delete the mailbox immediately
+2. Apply a litigation hold to preserve all emails for 90 days
+3. After 90 days, export mailbox to PST file and store in the archive folder
+4. Delete the mailbox after archive is confirmed
+
+Step 5 - Revoke All System Access:
+1. Disable account in all business systems:
+   - CRM: deactivate user in Salesforce
+   - Finance system: notify Finance Manager to disable
+   - HR system: notify HR to disable
+   - Any other systems the user had access to
+2. Remove from all Active Directory security groups
+3. Remove from all SharePoint sites
+
+Step 6 - Device Recovery:
+1. Collect all company equipment from the employee:
+   - Laptop
+   - Mobile phone if company-issued
+   - Access cards and keys
+   - Any other IT equipment
+2. Record equipment return in the asset management system
+3. Perform a factory reset on the laptop
+4. Wipe mobile device remotely via Intune if not physically returned
+5. Update asset status to Available or Decommissioned in the asset register
+
+Step 7 - Remove from Communication Tools:
+1. Remove from all Microsoft Teams channels and groups
+2. Remove from all distribution lists
+3. Remove from shared mailboxes
+4. Remove from any external collaboration tools
+
+Step 8 - Document Completion:
+1. Update the offboarding ticket with all completed steps
+2. Get sign-off from HR confirming all IT tasks are complete
+3. File the completed offboarding checklist in the IT records folder
+
+10. CONTRACTOR MANAGEMENT
+--------------------------
+Contractor Account Policy:
+- Contractor accounts must have an expiry date set matching their contract end date
+- Contractor accounts must be reviewed monthly
+- Access is limited to systems required for the specific engagement
+- Contractors do not receive company mobile devices
+- Contractors use their own devices enrolled in Intune or use company-provided laptops
+
+Extending Contractor Access:
+1. HR or manager submits extension request with new end date
+2. IT updates account expiry date in Active Directory
+3. Reviews and reconfirms all required access is appropriate
+
+Contractor Account Expiry:
+Active Directory is configured to automatically disable accounts on the expiry date. An alert is sent to the IT team 7 days before expiry. If extension is not requested, the account is automatically disabled on the expiry date.
+
+11. CONTACT DIRECTORY
+----------------------
+IT Helpdesk: helpdesk@techcore.com | Extension 1001 | Available Monday to Friday 8am to 6pm
+Network Team: network-team@techcore.com | Extension 1003
+Security Team: security@techcore.com | Extension 1002 | Available 24/7 for security incidents
+IT Manager: it-manager@techcore.com | Extension 1010
+
+Emergency IT Support (outside business hours):
+Call the IT emergency line: +971 50 123 4567
+Available for P1 Critical incidents only
+
+================================================================
+END OF DOCUMENT
+For queries contact IT Helpdesk: helpdesk@techcore.com | Ext: 1001
+================================================================

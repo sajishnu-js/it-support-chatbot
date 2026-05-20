@@ -1,0 +1,344 @@
+================================================================
+TECHCORE SOLUTIONS - SERVER AND INFRASTRUCTURE MANAGEMENT GUIDE
+Document Version: 1.2 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document covers the management and maintenance of TechCore Solutions server infrastructure including Windows Servers, Active Directory, DNS, DHCP, and backup systems. Only Level 2 and Level 3 IT engineers are authorised to make changes to server infrastructure.
+
+2. SERVER INVENTORY
+--------------------
+TechCore Solutions operates the following servers in the Dubai data centre:
+
+DC01 - Primary Domain Controller
+- Role: Active Directory Domain Controller, DNS, DHCP
+- OS: Windows Server 2022 Standard
+- IP Address: 10.0.30.10
+- CPU: Intel Xeon Silver 4316, 20 cores
+- RAM: 64GB ECC
+- Storage: 2x 480GB SSD RAID 1 (OS), 2x 1.92TB SSD RAID 1 (Data)
+- Warranty: HPE ProLiant DL380 Gen10 Plus - expires January 2027
+
+DC02 - Secondary Domain Controller
+- Role: Active Directory Domain Controller (secondary), DNS
+- OS: Windows Server 2022 Standard
+- IP Address: 10.0.30.11
+- CPU: Intel Xeon Silver 4316, 20 cores
+- RAM: 32GB ECC
+- Storage: 2x 480GB SSD RAID 1
+- Warranty: HPE ProLiant DL360 Gen10 - expires March 2027
+
+FS01 - File Server
+- Role: Company file shares, DFS Namespace
+- OS: Windows Server 2022 Standard
+- IP Address: 10.0.30.20
+- RAM: 32GB ECC
+- Storage: 4x 4TB HDD RAID 5 (24TB usable)
+- Warranty: HPE ProLiant DL380 Gen10 - expires June 2026
+
+EX01 - Exchange Server (Hybrid)
+- Role: Exchange Server 2019 (hybrid with Exchange Online)
+- OS: Windows Server 2019 Standard
+- IP Address: 10.0.30.30
+- RAM: 64GB
+- Storage: 2x 480GB SSD RAID 1 (OS), 4x 1.92TB SSD RAID 10 (Mailbox)
+- Warranty: HPE ProLiant DL380 Gen10 - expires September 2026
+
+VEEAM01 - Backup Server
+- Role: Veeam Backup and Replication server
+- OS: Windows Server 2022 Standard
+- IP Address: 10.0.30.40
+- RAM: 32GB
+- Storage: 2x 480GB SSD RAID 1 (OS), 8x 8TB HDD RAID 6 (Backup Repository)
+
+3. ACTIVE DIRECTORY MANAGEMENT
+--------------------------------
+Domain Information:
+Domain Name: techcore.local
+Forest Functional Level: Windows Server 2016
+Domain Functional Level: Windows Server 2016
+FSMO Roles: All held by DC01
+
+Organisational Unit Structure:
+techcore.local
+- TechCore
+  - Users
+    - IT
+    - Finance
+    - HR
+    - Operations
+    - Sales
+    - Management
+  - Computers
+    - Laptops
+    - Desktops
+    - Servers
+  - Groups
+    - Security Groups
+    - Distribution Groups
+  - Service Accounts
+  - Disabled Users
+
+Group Policy Objects:
+The following GPOs are applied at TechCore:
+
+Default Domain Policy: Password policy, account lockout policy.
+Security Baseline: CIS Windows 11 security baseline settings.
+Software Deployment: Deploys approved software to all computers.
+Desktop Settings: Wallpaper, screensaver, and start menu configuration.
+BitLocker Policy: Enforces BitLocker encryption on all laptops.
+Windows Update Policy: Configures automatic Windows updates.
+Printer Deployment: Deploys network printers based on OU.
+Restricted Groups: Ensures only approved accounts are local administrators.
+
+Active Directory Maintenance Tasks:
+Weekly:
+- Check AD replication status: Run repadmin /replsummary on DC01
+- Review failed logon attempts in Security Event Log
+- Check SYSVOL replication is healthy
+
+Monthly:
+- Review and clean up stale computer accounts (inactive for 90 days)
+- Review and clean up stale user accounts
+- Check and renew expiring SSL certificates
+- Review Group Policy application status
+
+4. DNS MANAGEMENT
+------------------
+DNS is managed by the Domain Controllers.
+Primary DNS Server: DC01 at 10.0.30.10
+Secondary DNS Server: DC02 at 10.0.30.11
+
+DNS Zones:
+techcore.local: Internal forward lookup zone for all company resources
+30.0.10.in-addr.arpa: Reverse lookup zone for server subnet
+168.192.in-addr.arpa: Reverse lookup zone for user subnets
+
+Adding a DNS Record:
+1. Log into DC01 using Remote Desktop
+2. Open DNS Manager from Server Manager or Administrative Tools
+3. Expand DC01 then Forward Lookup Zones then techcore.local
+4. Right-click and select New Host (A or AAAA)
+5. Enter the hostname (without the domain)
+6. Enter the IP address
+7. Check Create associated pointer (PTR) record for reverse lookup
+8. Click Add Host
+
+Common DNS Record Types:
+A Record: Maps hostname to IPv4 address. Most common record type.
+CNAME Record: Creates an alias pointing to another hostname.
+MX Record: Mail exchanger record for email routing.
+SRV Record: Service location record used by Active Directory.
+PTR Record: Reverse lookup, maps IP address to hostname.
+
+5. DHCP MANAGEMENT
+-------------------
+DHCP Server: DC01 at 10.0.30.10
+
+DHCP Scopes:
+Staff Network (VLAN 20): 192.168.20.50 to 192.168.20.200
+Lease duration: 8 hours
+Default gateway: 192.168.20.1
+DNS Servers: 10.0.30.10, 10.0.30.11
+
+Guest Network (VLAN 40): 192.168.40.50 to 192.168.40.200
+Lease duration: 2 hours
+Default gateway: 192.168.40.1
+DNS Servers: 8.8.8.8, 8.8.4.4
+
+DHCP Exclusions (Static IPs Reserved):
+192.168.20.1 to 192.168.20.49: Reserved for network infrastructure
+192.168.20.201 to 192.168.20.254: Reserved for servers and network devices
+
+Adding a DHCP Reservation:
+To assign a specific IP address to a device based on its MAC address:
+1. Log into DC01
+2. Open DHCP from Server Manager or Administrative Tools
+3. Expand the scope
+4. Right-click Reservations and select New Reservation
+5. Enter reservation name (device description)
+6. Enter IP address to reserve
+7. Enter MAC address of the device (format: AA-BB-CC-DD-EE-FF)
+8. Select Both for supported types
+9. Click Add
+
+6. FILE SERVER MANAGEMENT
+--------------------------
+File Share Structure on FS01:
+\\techcore.local\Shared\Company: Company-wide shared documents. Read access for all staff.
+\\techcore.local\Shared\Finance: Finance department files. Access restricted to Finance team.
+\\techcore.local\Shared\HR: HR department files. Access restricted to HR team.
+\\techcore.local\Shared\IT: IT department files. Access restricted to IT team.
+\\techcore.local\Shared\Projects: Project files. Access granted per project.
+\\techcore.local\Shared\Archive: Archived files. Read-only access.
+
+DFS Namespace:
+DFS (Distributed File System) provides a unified namespace:
+Users access \\techcore.local\Shared regardless of the actual server.
+If FS01 fails, DFS automatically fails over to FS02 (disaster recovery site).
+
+Creating a New File Share:
+1. Log into FS01 via Remote Desktop
+2. Open Server Manager then File and Storage Services
+3. Navigate to Shares
+4. Click New Share
+5. Select SMB Share Quick
+6. Select the volume (D:\Shares)
+7. Enter the share name
+8. Configure permissions:
+   - Remove Everyone permission
+   - Add the appropriate Active Directory group with required permissions
+   - Apply NTFS permissions to match share permissions
+9. Click Create
+
+File Share Permissions Best Practice:
+Share Permissions: Grant Full Control to Domain Users (let NTFS control access)
+NTFS Permissions: Apply granular permissions at folder level
+This approach (share level full control, NTFS granular) is the Microsoft recommended method.
+
+Storage Quotas:
+All user home directories have a 10GB quota enforced.
+Department shares have no quota but usage is monitored monthly.
+Alert is sent to IT Manager when any share exceeds 80% capacity.
+
+7. BACKUP AND RECOVERY
+------------------------
+Backup Solution: Veeam Backup and Replication 12
+Backup Server: VEEAM01 at 10.0.30.40
+Backup Repository: Local disk on VEEAM01 with 48TB usable space
+Offsite Backup: Azure Blob Storage for disaster recovery
+
+Backup Schedule:
+Domain Controllers (DC01, DC02):
+- Full backup: Every Sunday at 11pm
+- Incremental backup: Every day at 11pm
+- Retention: 30 days
+
+File Server (FS01):
+- Full backup: Every Saturday at 10pm
+- Incremental backup: Every day at 10pm
+- Retention: 90 days (monthly backups kept for 1 year)
+
+Exchange Server (EX01):
+- Full backup: Every Sunday at midnight
+- Incremental backup: Every day at midnight
+- Retention: 30 days
+
+All Servers:
+- Replication to Azure: Every Sunday
+- Azure retention: 12 months
+
+Verifying Backup Success:
+1. Log into VEEAM01 via Remote Desktop
+2. Open Veeam Backup and Replication console
+3. Navigate to Home then Last 24 Hours
+4. Verify all jobs show Success status
+5. If any job shows Warning or Failed:
+   - Click on the job to see the error details
+   - Address the error (insufficient space, network issue, server unreachable)
+   - Run the failed job manually to get a successful backup
+
+Restoring Files from Backup:
+1. Open Veeam Backup and Replication console
+2. Click Restore
+3. Select the appropriate backup
+4. Choose File Level Restore
+5. Browse to the file or folder to restore
+6. Right-click and select Restore to original location
+7. Choose whether to overwrite the existing file or restore with a different name
+
+Restoring a Full Server (Disaster Recovery):
+1. Boot the replacement server from Veeam Recovery Media USB
+2. Connect to the Veeam Backup server
+3. Select the backup to restore from
+4. Follow the restoration wizard
+5. Allow time for full restoration (depends on server size)
+6. Verify server functionality after restoration
+
+8. WINDOWS SERVER UPDATES
+--------------------------
+Patch Management Policy:
+Security updates: Applied within 14 days of release
+Critical updates: Applied within 7 days of release
+Feature updates: Evaluated and applied quarterly
+
+Update Process:
+1. Updates are first applied to DC02 (secondary domain controller)
+2. If DC02 remains stable for 48 hours, updates are applied to remaining servers
+3. Servers are updated during the maintenance window: Friday 11pm to Saturday 3am
+4. A snapshot is taken before applying updates for quick rollback
+
+Maintenance Window:
+Server maintenance is scheduled for every Friday 11pm to Saturday 3am.
+All planned maintenance must be communicated to affected users at least 24 hours in advance.
+Emergency maintenance can be performed outside the window with IT Manager approval.
+
+9. SERVER MONITORING
+---------------------
+Monitoring Tool: SolarWinds Network Performance Monitor
+Monitoring URL: monitoring.techcore.com
+Login: Use IT admin credentials
+
+Monitored Metrics:
+- CPU utilisation (alert at 85%)
+- Memory utilisation (alert at 90%)
+- Disk space (alert at 80%)
+- Network interface status
+- Server availability (ping every 60 seconds)
+- Windows services status
+- Event log errors
+
+Alert Escalation:
+P1 Alert (server down): Immediate SMS and email to IT Manager and on-call engineer
+P2 Alert (resource above 90%): Email to IT team within 5 minutes
+P3 Alert (resource above 80%): Email to IT team within 30 minutes
+
+Common Server Alerts and Actions:
+High CPU (above 85%):
+1. Remote desktop to the server
+2. Open Task Manager
+3. Identify the process consuming high CPU
+4. Investigate if the process is expected or suspicious
+5. If expected (backup running, antivirus scan), wait for it to complete
+6. If unexpected, investigate the process and terminate if safe to do so
+
+Low Disk Space (below 20%):
+1. Remote desktop to the server
+2. Open Server Manager then File and Storage Services
+3. Identify which volume is low on space
+4. Run Disk Cleanup to remove temporary files
+5. Check for large unnecessary files or logs
+6. If the volume is legitimately filling up, plan for storage expansion
+
+10. DISASTER RECOVERY
+----------------------
+Recovery Time Objective (RTO): 4 hours for critical systems
+Recovery Point Objective (RPO): 24 hours maximum data loss
+
+Disaster Recovery Site:
+TechCore Solutions maintains a disaster recovery environment in Azure.
+In the event of a complete data centre failure, services can be restored from Azure within 4 hours.
+
+DR Activation Process:
+1. IT Manager declares a disaster and activates the DR plan
+2. IT team connects to Azure DR environment
+3. Restore servers from Veeam Azure backups in priority order:
+   Priority 1: Domain Controllers
+   Priority 2: Exchange Server
+   Priority 3: File Server
+   Priority 4: Other servers
+4. Update DNS to point to Azure IP addresses
+5. Test connectivity and functionality
+6. Communicate status to all staff
+
+DR Testing:
+Disaster recovery is tested annually.
+The test involves restoring all critical systems in the Azure DR environment.
+Test results are documented and any gaps are addressed.
+
+================================================================
+END OF DOCUMENT
+For server infrastructure queries contact: it-manager@techcore.com | Ext: 1010
+Level 2 and above only for server changes.
+================================================================

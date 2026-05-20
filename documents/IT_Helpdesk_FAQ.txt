@@ -1,0 +1,135 @@
+================================================================
+TECHCORE SOLUTIONS - IT HELPDESK FREQUENTLY ASKED QUESTIONS
+Document Version: 1.5 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document contains answers to the most frequently asked IT support questions at TechCore Solutions. IT staff should use this as a first reference before escalating issues. This document is updated monthly based on common support tickets.
+
+2. ACCOUNT AND ACCESS QUESTIONS
+---------------------------------
+Q: My account is locked. How do I unlock it?
+A: Account lockouts happen after 5 failed login attempts within 30 minutes. To unlock your account, contact IT Helpdesk on extension 1001 or email helpdesk@techcore.com. The IT team will verify your identity and unlock your account. You can also use Self-Service Password Reset at aka.ms/sspr if you have registered your mobile number previously. Accounts automatically unlock after 30 minutes if you wait without attempting further logins.
+
+Q: How do I reset my password?
+A: You have three options. First, use Self-Service Password Reset by visiting aka.ms/sspr on any device and following the prompts. Second, contact IT Helpdesk on extension 1001 and we will reset it for you after verifying your identity. Third, ask your manager to submit a password reset request on your behalf. Passwords must meet the complexity requirements: minimum 12 characters with uppercase, lowercase, numbers, and special characters.
+
+Q: How do I set up my email on my mobile phone?
+A: For iPhone, go to Settings then Mail then Accounts then Add Account then Microsoft Exchange. Enter your company email address and password. For Android, download the Microsoft Outlook app from the Play Store, open it, and sign in with your company email and password. You will be prompted to enrol your device in Intune during setup. Contact IT Helpdesk on extension 1001 if you need assistance.
+
+Q: I cannot access a shared drive or folder. What should I do?
+A: Access to shared drives is controlled by Active Directory security groups. Contact IT Helpdesk with the exact path of the folder you need access to and the business reason for the access. Your manager will need to approve the access request. IT will grant access within 24 hours of manager approval.
+
+Q: I have forgotten my MFA authentication app and cannot log in. What do I do?
+A: Contact IT Helpdesk immediately on extension 1001. We will temporarily bypass MFA for your account so you can log in. You must then set up a new MFA method within 24 hours. If you have a backup authentication method registered (phone number), you can use that at the MFA prompt by clicking I cannot use my Microsoft Authenticator app right now.
+
+Q: How do I request access to a new system or application?
+A: Submit a service request through the IT ticketing system at helpdesk.techcore.com or email helpdesk@techcore.com with the following information: system name, reason for access, level of access required, and your manager approval. Access will be reviewed and provisioned within 48 hours.
+
+3. EMAIL QUESTIONS
+-------------------
+Q: I am not receiving emails. What should I check?
+A: First check your Junk or Spam folder. Second check if your mailbox is full by right-clicking your inbox in Outlook and selecting Properties. Third ask the sender to confirm they are sending to the correct email address. Fourth check if the emails appear on the web version at outlook.office.com. If none of these resolve the issue, contact IT Helpdesk on extension 1001.
+
+Q: How do I check my mailbox size?
+A: In Outlook, right-click your name at the top of the folder list and select Properties. Click Folder Size to see the total size. Alternatively log into outlook.office.com, click the settings gear icon, search for Mailbox size to see your usage and limit. If your mailbox is nearly full, delete old emails and empty the deleted items folder, or contact IT to discuss archiving options.
+
+Q: How do I set up an out of office reply?
+A: In Outlook, click File then Automatic Replies. Check Send automatic replies. Set the date range if you want it to automatically turn off. Write your out of office message for internal contacts. If you want an out of office reply to external senders, check Also send replies to senders outside my organisation and write a message for external contacts. Click OK to save.
+
+Q: How do I create an email signature?
+A: TechCore Solutions uses a central signature management system that automatically applies the company signature template to all outgoing emails. Contact IT Helpdesk to update your signature details such as job title or phone number. If you need a custom signature for a specific purpose, contact IT with the details.
+
+Q: I accidentally deleted an important email. Can it be recovered?
+A: Yes. First check the Deleted Items folder. If not there, in Outlook click the Folder tab then Recover Deleted Items to access emails deleted within the last 30 days. If the email is older than 30 days, contact IT Helpdesk as we may be able to recover it from email archives. We retain email archives for 7 years.
+
+Q: Someone sent me an email but it is not arriving. What could be the issue?
+A: Several things could prevent email delivery. The sender may have the wrong email address. The email may have been filtered as spam by Mimecast. The sender's domain may be blocked. Your mailbox may be full. To investigate, contact IT Helpdesk with the sender's email address and the approximate time they sent the email. IT can trace the email through Mimecast logs.
+
+4. COMPUTER AND SOFTWARE QUESTIONS
+------------------------------------
+Q: My computer is running very slowly. What can I do?
+A: Try these steps in order. First restart your computer as this clears memory and temporary files. Second close unnecessary applications and browser tabs. Third check Task Manager (Ctrl+Shift+Esc) for any process using excessive CPU or memory. Fourth check available disk space by opening This PC - if less than 10% is free the computer will be slow. Fifth run Disk Cleanup by searching for it in the Start menu. If the computer is still slow after these steps, contact IT Helpdesk on extension 1001.
+
+Q: How do I request a new software installation?
+A: Submit a software request through the IT ticketing system at helpdesk.techcore.com. Include the software name, version, business justification, and cost if applicable. Your manager must approve the request. IT will evaluate the software for security and licensing compliance. Approved software will be deployed within 48 hours of approval. Note that you cannot install software yourself as standard user accounts do not have local administrator rights.
+
+Q: Microsoft Office keeps crashing. What should I do?
+A: First try opening Office in safe mode by holding Ctrl while clicking the Office application icon. If it works in safe mode, the issue is likely an add-in. Go to File then Options then Add-ins then Manage COM Add-ins then Go and disable add-ins one by one. If safe mode does not help, try repairing Office through Control Panel then Programs then Microsoft 365 Apps then Change then Quick Repair. If the issue persists, contact IT Helpdesk.
+
+Q: My computer screen is displaying incorrectly or has the wrong resolution?
+A: Right-click the desktop and select Display Settings. Click the resolution dropdown and select the recommended resolution. If using multiple monitors, you can adjust each monitor's settings separately. If the issue persists after adjusting settings, try updating the display driver through Device Manager. Contact IT Helpdesk if the problem continues.
+
+Q: How do I connect to a second monitor?
+A: Connect the monitor cable (HDMI, DisplayPort, or USB-C) to your laptop and to the monitor. Press Windows key + P to open the projection options. Select Extend to use both screens as one extended desktop (recommended), Duplicate to show the same on both screens, or Second screen only to use just the external monitor. If the second monitor is not detected, right-click the desktop, select Display Settings, and click Detect.
+
+Q: I need to access a website but it is blocked. What should I do?
+A: If a website is blocked for a legitimate business reason, submit a website whitelist request through the IT ticketing system. Include the URL, the business reason for needing access, and get your manager to approve the request. IT will review within 24 hours and whitelist the site if approved. Personal social media sites and entertainment sites remain blocked per company policy.
+
+5. NETWORK AND VPN QUESTIONS
+------------------------------
+Q: How do I connect to the company VPN?
+A: Open the GlobalProtect application in the system tray (bottom right of screen). If it is not visible, search for GlobalProtect in the Start menu. Click Connect. Enter your company username and password. Complete MFA if prompted. The VPN server address is vpn.techcore.com. If you do not have GlobalProtect installed, contact IT Helpdesk to have it deployed to your device.
+
+Q: The VPN is connecting but I cannot access internal resources. What should I do?
+A: First confirm the VPN shows as Connected status in GlobalProtect. Then try accessing the resource by IP address instead of hostname to determine if it is a DNS issue. Run ipconfig /all in Command Prompt to verify a VPN IP address has been assigned (it should be in the 10.0.100.x range). Disconnect and reconnect the VPN. If the issue persists, contact IT Helpdesk with the specific resource you are trying to access.
+
+Q: What are the office Wi-Fi details?
+A: Corporate Wi-Fi Network Name: TechCore-Corporate. Password: Contact IT Helpdesk on extension 1001 for the current password (password rotates monthly for security). Guest Wi-Fi Network Name: TechCore-Guest. Guest Wi-Fi Password: Guest2025! (available for client visits and temporary visitors). Note: Personal devices should use the guest network. Company devices should use the corporate network.
+
+Q: My internet connection is very slow at the office. What should I do?
+A: First check if the issue affects only your device or the whole office by asking a colleague. If only your device, try connecting to a different Wi-Fi access point or use a wired connection. Run a speed test at speedtest.net to confirm the speed. Open Task Manager and check the Network tab in Resource Monitor for applications consuming bandwidth. If the whole office is slow, contact IT Helpdesk as it may be a WAN or ISP issue.
+
+6. PRINTER QUESTIONS
+---------------------
+Q: How do I add a network printer?
+A: Network printers are deployed to your computer automatically through Group Policy based on your department and location. If a printer is missing, contact IT Helpdesk with the printer name or location and we will add it to your account. If you need to manually add a printer, go to Settings then Bluetooth and devices then Printers and scanners then Add device and search for the printer by name.
+
+Q: The printer is showing as offline. What should I do?
+A: First check the printer is powered on and the Ready light is green. Second try printing a test page directly from the printer. Third on your computer go to Settings then Bluetooth and devices then Printers and scanners, click the printer, and click Open print queue. Click the Printer menu and ensure Use Printer Offline is not ticked. Fourth remove and re-add the printer. If the issue persists, contact IT Helpdesk on extension 1001.
+
+Q: My print job is stuck in the queue and nothing is printing. What should I do?
+A: Open Settings then Bluetooth and devices then Printers and scanners. Click the printer and click Open print queue. Select all jobs and click Cancel. If jobs cannot be cancelled, open Services from the Start menu, find Print Spooler, right-click and select Restart. Then delete all files from C:\Windows\System32\spool\PRINTERS (do not delete the folder). Restart Print Spooler again and try printing.
+
+7. VIDEO CONFERENCING QUESTIONS
+---------------------------------
+Q: How do I join a Microsoft Teams meeting?
+A: Click the meeting link in the calendar invitation or email. If you have Teams installed, it will open automatically. Click Join now to enter the meeting. You can also join through the browser at teams.microsoft.com. If joining by phone, use the dial-in number provided in the meeting invitation.
+
+Q: My microphone is not working in Teams meetings. What should I do?
+A: First check the Teams device settings by clicking the three dots in the Teams meeting and selecting Device settings. Ensure the correct microphone is selected. Second check Windows microphone permissions by going to Settings then Privacy and Security then Microphone and ensure Teams is allowed. Third check if the microphone works in other applications. If not, the issue is with the microphone hardware. Contact IT Helpdesk for further assistance.
+
+Q: My camera is not showing in Teams. What should I do?
+A: Check device settings in Teams during a meeting by clicking the three dots and selecting Device settings. Ensure the correct camera is selected and that you have clicked Start video. Check Windows camera permissions under Settings then Privacy and Security then Camera. Ensure no physical privacy cover is blocking the camera lens. If the issue persists, try updating the camera driver through Device Manager.
+
+8. IT HELPDESK CONTACT INFORMATION
+-------------------------------------
+IT Helpdesk: helpdesk@techcore.com | Extension 1001
+Available: Monday to Friday, 8am to 6pm UAE time
+
+For urgent issues outside business hours:
+Emergency IT Line: +971 50 123 4567
+Available for P1 Critical issues only (complete system outage, security breach)
+
+Self-Service Portal: helpdesk.techcore.com
+Use the self-service portal to:
+- Submit new support tickets
+- Check the status of existing tickets
+- Access IT knowledge base articles
+- Request new software or hardware
+- Request access to systems
+
+Network Team: network-team@techcore.com | Extension 1003
+For escalated network issues only
+
+IT Security Team: security@techcore.com | Extension 1002
+For security incidents only. Available 24/7 for critical security issues.
+
+IT Manager: it-manager@techcore.com | Extension 1010
+For escalations and complaints only
+
+================================================================
+END OF DOCUMENT
+IT Helpdesk: helpdesk@techcore.com | Extension 1001 | Mon-Fri 8am-6pm
+================================================================

@@ -1,0 +1,268 @@
+================================================================
+TECHCORE SOLUTIONS - IT SECURITY POLICY
+Document Version: 2.0 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This document outlines the IT Security Policy for TechCore Solutions. All employees, contractors, and third-party vendors must comply with this policy. Failure to comply may result in disciplinary action up to and including termination.
+
+2. PASSWORD POLICY
+-------------------
+All user accounts must comply with the following password requirements:
+
+Minimum Requirements:
+- Minimum length: 12 characters
+- Must contain at least one uppercase letter
+- Must contain at least one lowercase letter
+- Must contain at least one number
+- Must contain at least one special character (! @ # $ % ^ & *)
+- Password must not contain the username or company name
+- Password must not be one of the last 10 previously used passwords
+
+Password Management:
+- Passwords must be changed every 90 days
+- Passwords must never be shared with anyone including IT staff
+- Passwords must never be written down or stored in plain text
+- Passwords must never be sent via email or instant messaging
+- Use the company approved password manager LastPass for storing passwords
+- IT staff will never ask for your password over the phone or email
+
+Default Account Passwords:
+- All default passwords on new devices and systems must be changed immediately upon deployment
+- Default credentials on network equipment must be changed before connecting to the network
+
+3. MULTI-FACTOR AUTHENTICATION
+--------------------------------
+MFA is mandatory for all user accounts accessing company resources.
+
+MFA Requirements:
+- All Microsoft 365 accounts must have MFA enabled
+- All VPN connections require MFA
+- All cloud-based systems require MFA
+- All privileged administrator accounts require hardware MFA tokens
+
+Approved MFA Methods:
+- Microsoft Authenticator app (preferred)
+- SMS one-time password (allowed but not preferred)
+- Hardware token (required for admin accounts)
+- Email OTP is not an approved MFA method
+
+Setting Up MFA:
+1. Visit aka.ms/mfasetup
+2. Sign in with your Microsoft 365 credentials
+3. Choose Microsoft Authenticator as the authentication method
+4. Download the Microsoft Authenticator app on your mobile device
+5. Scan the QR code displayed on screen
+6. Enter the verification code shown in the app
+7. Click Done to complete setup
+
+If MFA Device is Lost:
+1. Immediately contact IT Helpdesk on extension 1001
+2. IT will temporarily disable MFA and assist with re-registration
+3. A new MFA setup must be completed within 24 hours
+
+4. ACCEPTABLE USE POLICY
+--------------------------
+Company IT resources including computers, networks, email, and internet are provided for business use. Limited personal use is permitted provided it does not interfere with work duties.
+
+Permitted Activities:
+- All work-related tasks and communications
+- Limited personal browsing during breaks
+- Accessing personal email during lunch breaks
+- Online banking for personal use during breaks
+
+Prohibited Activities:
+- Downloading or installing unauthorised software
+- Visiting websites containing illegal, offensive, or inappropriate content
+- Downloading pirated software, music, movies, or other media
+- Using company resources for personal business or financial gain
+- Accessing or sharing confidential data without authorisation
+- Disabling or bypassing security software
+- Using company devices for cryptocurrency mining
+- Accessing dark web or anonymous networks using Tor
+
+Software Installation Policy:
+- Only IT-approved software may be installed on company devices
+- Users do not have local administrator rights to prevent unauthorised installations
+- Software requests must be submitted to IT via a service request ticket
+- IT will evaluate and install approved software within 48 hours
+
+5. DATA CLASSIFICATION
+-----------------------
+All company data must be classified into one of four categories:
+
+Public:
+- Information that can be freely shared externally
+- Examples: marketing materials, public website content, published reports
+- No special handling required
+
+Internal:
+- Information for internal use only not intended for public release
+- Examples: internal policies, procedures, staff directories
+- Must not be shared externally without management approval
+
+Confidential:
+- Sensitive business information that could harm the company if disclosed
+- Examples: financial reports, contracts, business strategies, client data
+- Must be encrypted when stored or transmitted
+- Access restricted to authorised personnel only
+- Must not be stored on personal devices
+
+Restricted:
+- Highly sensitive information requiring strictest protection
+- Examples: HR records, legal documents, security credentials, health data
+- Encrypted at rest and in transit at all times
+- Access requires explicit written approval from department head
+- Access logged and audited regularly
+
+6. EMAIL SECURITY
+------------------
+Email is the most common vector for cyberattacks. Follow these guidelines at all times.
+
+Phishing Recognition:
+- Be suspicious of unexpected emails asking you to click links or open attachments
+- Check the sender's actual email address not just the display name
+- Hover over links before clicking to see the actual destination URL
+- Be suspicious of urgent language pressuring immediate action
+- Legitimate companies will never ask for passwords via email
+- Be suspicious of emails with poor grammar or spelling
+
+Reporting Phishing:
+1. Do not click any links or open any attachments
+2. Click the Report Phishing button in Outlook toolbar
+3. If you accidentally clicked a link, immediately call IT Security on extension 1002
+4. Do not delete the email until IT Security has reviewed it
+
+Email Encryption:
+- All emails containing confidential or restricted data must be encrypted
+- Use Microsoft 365 Message Encryption by typing ENCRYPT in the email subject line
+- Alternatively click the Encrypt button in Outlook before sending
+
+Email Attachment Policy:
+- Do not open attachments from unknown senders
+- Be cautious with attachments even from known senders if unexpected
+- Attachments allowed: PDF, Word, Excel, PowerPoint, images
+- Never open executable files (.exe, .bat, .cmd, .vbs, .ps1) received by email
+
+7. DEVICE SECURITY
+-------------------
+All company devices must meet the following security requirements.
+
+Endpoint Protection:
+- Microsoft Defender Antivirus must be active and up to date at all times
+- CrowdStrike Falcon sensor must be installed and running
+- Devices must be enrolled in Microsoft Intune
+- Full disk encryption using BitLocker must be enabled on all Windows devices
+- Screen lock must activate after maximum 5 minutes of inactivity
+- Devices must have automatic Windows updates enabled
+
+Physical Security:
+- Never leave devices unattended in public places
+- Always lock your screen when stepping away from your desk (Windows key + L)
+- Never allow unauthorised persons to use your device
+- Never connect to unsecured public Wi-Fi without using the company VPN
+- Report lost or stolen devices immediately to IT Security on extension 1002
+
+Mobile Device Policy:
+- Company email and data on personal mobile devices requires Intune enrolment
+- Personal devices enrolled in Intune must have a PIN or biometric lock enabled
+- Remote wipe will be applied to lost or stolen enrolled devices
+- Jailbroken or rooted devices are not permitted to access company data
+
+8. REMOTE WORK SECURITY
+-------------------------
+Additional security requirements apply when working remotely.
+
+VPN Requirements:
+- Company VPN must be connected at all times when accessing internal resources
+- VPN server: vpn.techcore.com
+- VPN client: GlobalProtect
+- Do not split tunnel VPN - all traffic must route through company VPN
+
+Home Network Security:
+- Ensure your home router firmware is up to date
+- Use WPA3 or WPA2 encryption on your home Wi-Fi
+- Change your home router default password
+- Do not allow others to use your work device on your home network
+
+Public Wi-Fi:
+- Never connect to public Wi-Fi without VPN enabled
+- Avoid performing sensitive work tasks on public networks even with VPN
+- Use mobile data hotspot as a safer alternative to public Wi-Fi
+
+Screen Privacy:
+- Use a privacy screen filter when working in public places
+- Be aware of shoulder surfing in public locations
+- Do not conduct confidential calls in public areas
+
+9. INCIDENT RESPONSE
+---------------------
+All security incidents must be reported immediately regardless of severity.
+
+What Constitutes a Security Incident:
+- Suspected phishing email that was clicked
+- Suspected malware or virus infection
+- Unauthorised access to systems or data
+- Lost or stolen device
+- Accidental disclosure of confidential information
+- Unusual system behaviour suggesting compromise
+- Ransomware or encryption of files
+
+Reporting Process:
+1. Do not attempt to fix the issue yourself
+2. Immediately call IT Security on extension 1002
+3. For after-hours emergencies call +971 50 123 4567
+4. Preserve all evidence - do not turn off or restart the device
+5. Document what you observed including time and nature of the incident
+6. IT Security will guide you through next steps
+
+Incident Response Timeline:
+- P1 Security Incident: Response within 15 minutes, 24/7
+- P2 Security Incident: Response within 1 hour during business hours
+- P3 Security Incident: Response within 4 hours during business hours
+
+10. THIRD PARTY AND VENDOR ACCESS
+-----------------------------------
+Third party vendors requiring access to company systems must comply with this policy.
+
+Vendor Access Requirements:
+- All vendor access must be approved by the IT Manager in writing
+- Vendors must sign the Third Party Security Agreement before access is granted
+- Vendor accounts are temporary and must have explicit expiry dates
+- All vendor sessions must be monitored and logged
+- Vendors must use multi-factor authentication
+- Vendor access is limited to systems required for their specific engagement
+
+Remote Vendor Access:
+- Vendors must connect through the designated vendor VPN portal
+- Screen sharing sessions must be conducted through approved tools only
+- Vendors must not store company data on their own systems
+- All data transferred to vendors must be encrypted
+
+11. COMPLIANCE AND AUDITING
+-----------------------------
+TechCore Solutions conducts regular security audits to ensure policy compliance.
+
+Audit Activities:
+- Monthly review of user access rights
+- Quarterly password policy compliance check
+- Semi-annual vulnerability assessment
+- Annual penetration testing by approved third party
+- Continuous monitoring through CrowdStrike and Microsoft Defender
+
+Non-Compliance Consequences:
+- First offence: Written warning and mandatory security training
+- Second offence: Formal disciplinary action
+- Third offence or severe breach: Termination and potential legal action
+
+Security Training:
+- All employees must complete annual security awareness training
+- New employees must complete training within their first week
+- Training is delivered through the company LMS at training.techcore.com
+- Phishing simulation tests are conducted quarterly
+
+================================================================
+END OF DOCUMENT
+For security incidents contact: security@techcore.com | Ext: 1002 | 24/7
+================================================================

@@ -1,0 +1,276 @@
+================================================================
+TECHCORE SOLUTIONS - NETWORK TROUBLESHOOTING GUIDE
+Document Version: 1.4 | Last Updated: January 2025
+================================================================
+
+1. INTRODUCTION
+---------------
+This guide provides step-by-step instructions for diagnosing and resolving common network issues at TechCore Solutions. Follow each section carefully before escalating to Level 2 or Level 3 support.
+
+2. BASIC NETWORK DIAGNOSTICS
+------------------------------
+Before troubleshooting any network issue, run these basic checks first.
+
+Check Physical Connection:
+1. Ensure the network cable is firmly plugged into both the device and the wall port
+2. Check the LED lights on the network port - green means connected, amber means activity
+3. Try a different network cable to rule out cable failure
+4. Try a different wall port if available
+
+Check IP Configuration:
+1. Open Command Prompt as Administrator
+2. Type ipconfig /all and press Enter
+3. Check the following:
+   - IPv4 Address: Should be in range 192.168.1.x or 10.0.0.x for internal network
+   - Subnet Mask: Should be 255.255.255.0
+   - Default Gateway: Should match the router IP (typically 192.168.1.1 or 10.0.0.1)
+   - DNS Servers: Should show company DNS server IPs
+4. If IP shows 169.254.x.x this means the device cannot reach the DHCP server
+
+Ping Test:
+1. Open Command Prompt
+2. Ping the default gateway: ping 192.168.1.1
+3. If gateway ping fails: issue is between device and router
+4. Ping 8.8.8.8 (Google DNS): if this fails but gateway ping works, internet connection is down
+5. Ping google.com: if IP ping works but domain ping fails, DNS issue exists
+
+3. NO INTERNET CONNECTION
+--------------------------
+Step 1 - Check if issue is device-specific or affects all users:
+1. Test internet on another device on the same network
+2. If all devices affected: issue is with router, switch, or ISP
+3. If only one device affected: issue is with that specific device
+
+Step 2 - Release and Renew IP Address:
+1. Open Command Prompt as Administrator
+2. Type ipconfig /release and press Enter
+3. Wait 10 seconds
+4. Type ipconfig /renew and press Enter
+5. Check if a valid IP address is now assigned
+6. Test internet connection
+
+Step 3 - Flush DNS Cache:
+1. Open Command Prompt as Administrator
+2. Type ipconfig /flushdns and press Enter
+3. Type netsh winsock reset and press Enter
+4. Restart the computer
+5. Test internet connection
+
+Step 4 - Reset Network Settings:
+1. Open Command Prompt as Administrator
+2. Type netsh int ip reset and press Enter
+3. Type netsh winsock reset and press Enter
+4. Restart the computer
+
+Step 5 - Check Network Adapter:
+1. Open Device Manager
+2. Expand Network Adapters
+3. Look for any yellow warning icons
+4. Right-click the adapter and select Update Driver
+5. If driver update does not help, uninstall and reinstall the adapter
+
+4. SLOW NETWORK CONNECTION
+----------------------------
+Step 1 - Test Network Speed:
+1. Visit speedtest.net or fast.com
+2. Run a speed test and note the download and upload speeds
+3. Compare results with the contracted internet speed
+4. If significantly slower than expected, continue troubleshooting
+
+Step 2 - Check for Bandwidth Hogs:
+1. Open Task Manager
+2. Click the Performance tab then Open Resource Monitor
+3. Click the Network tab
+4. Identify any processes consuming unusually high bandwidth
+5. If a non-business application is consuming bandwidth, terminate the process
+
+Step 3 - Check Wi-Fi Signal Strength:
+1. Click the Wi-Fi icon in the taskbar
+2. Check the number of signal bars
+3. If signal is weak, move closer to the access point
+4. If signal is consistently weak in a specific area, report to IT for access point review
+
+Step 4 - Switch from Wi-Fi to Wired:
+1. Connect a network cable directly to the device
+2. Disable Wi-Fi on the device
+3. Test connection speed again
+4. If wired connection is significantly faster, Wi-Fi infrastructure may need review
+
+5. VPN ISSUES
+--------------
+Cannot Connect to VPN:
+1. Verify internet connection is working before troubleshooting VPN
+2. Check VPN client is installed and up to date
+3. Verify username and password are correct
+4. Check if the user account is active in Active Directory
+5. Verify the VPN server address is correct: vpn.techcore.com
+6. Try disconnecting and reconnecting
+7. Restart the VPN client
+8. Check Windows Firewall is not blocking the VPN client
+9. Try connecting from a different network to rule out local network blocking VPN ports
+
+VPN Connected But Cannot Access Resources:
+1. Check if the VPN shows as Connected status
+2. Run ipconfig /all to verify VPN assigned a valid internal IP
+3. Try pinging an internal server by IP address
+4. If ping by IP works but not by name, DNS is not resolving through VPN
+5. Check DNS settings in VPN client configuration
+6. Disconnect and reconnect VPN
+7. Restart the DNS Client service in Windows Services
+
+VPN Keeps Disconnecting:
+1. Check internet connection stability - VPN drops on unstable connections
+2. Check if there is an idle timeout setting in the VPN client
+3. Update VPN client to latest version
+4. Check for conflicting software such as antivirus blocking VPN
+5. Try a different VPN protocol in the client settings
+6. Escalate to Level 2 if issue persists
+
+6. Wi-Fi ISSUES
+----------------
+Cannot Find Wi-Fi Network:
+1. Ensure Wi-Fi is enabled on the device (check the physical Wi-Fi switch on laptops)
+2. Check if the wireless adapter is enabled in Device Manager
+3. Check if Airplane Mode is turned on and disable it
+4. Restart the wireless adapter: disable then enable in Device Manager
+5. Check if the access point is broadcasting the SSID
+6. Ask another user nearby if they can see the network
+
+Cannot Connect to Wi-Fi:
+1. Forget the network and reconnect: go to Wi-Fi settings, click the network, select Forget
+2. Reconnect by selecting the network and entering the password
+3. Wi-Fi password for corporate network: Contact IT helpdesk for current password
+4. Check if MAC address filtering is enabled on the access point
+5. Ensure the device's MAC address is registered if MAC filtering is active
+
+Wi-Fi Password:
+Corporate Wi-Fi Network Name: TechCore-Corporate
+Password: Contact IT Helpdesk at extension 1001
+Guest Wi-Fi Network Name: TechCore-Guest
+Password: Guest2025!
+
+7. DNS TROUBLESHOOTING
+------------------------
+DNS Not Resolving:
+1. Open Command Prompt
+2. Type nslookup google.com and press Enter
+3. If you get a DNS error, DNS is the issue
+4. Check DNS server settings in network adapter properties
+5. Primary DNS: 10.0.0.10 (internal DNS server)
+6. Secondary DNS: 8.8.8.8 (Google DNS as backup)
+
+Flush DNS Cache:
+1. Open Command Prompt as Administrator
+2. Type ipconfig /flushdns and press Enter
+3. You should see Successfully flushed the DNS Resolver Cache
+4. Test connection again
+
+Register DNS:
+1. Open Command Prompt as Administrator
+2. Type ipconfig /registerdns and press Enter
+3. This re-registers the computer's hostname with DNS
+
+8. DHCP TROUBLESHOOTING
+-------------------------
+Device Getting Wrong IP or No IP:
+1. Check if device is getting an APIPA address (169.254.x.x) which means DHCP failed
+2. Release and renew IP as described in Section 3
+3. Check DHCP server status - open DHCP console on server and verify service is running
+4. Check DHCP scope has available IP addresses - if scope is full, no new IPs can be assigned
+5. Check if device is on the correct VLAN for its IP range
+6. If DHCP server is unreachable, set a static IP temporarily:
+   IP: 192.168.1.xxx (use an available IP in range)
+   Subnet Mask: 255.255.255.0
+   Gateway: 192.168.1.1
+   DNS: 10.0.0.10
+
+9. FIREWALL ISSUES
+-------------------
+Application Cannot Connect to Internet:
+1. Check if Windows Firewall is blocking the application
+2. Open Windows Defender Firewall with Advanced Security
+3. Check Inbound and Outbound Rules for blocks on the application
+4. Try temporarily disabling Windows Firewall to test - if issue resolves, firewall is the cause
+5. Add the application to firewall exceptions
+6. Check corporate firewall rules if the application connects to external services
+
+Blocked Websites:
+The following categories of websites are blocked on the corporate network by policy:
+- Social media (personal use)
+- Gaming websites
+- Streaming services (except approved business tools)
+- File sharing and torrent sites
+
+If a business-required website is blocked:
+1. Raise a ticket with IT requesting the URL to be whitelisted
+2. Provide business justification for the access
+3. Manager approval is required for URL whitelisting
+4. IT will review and implement within 24 hours for P3 priority
+
+10. NETWORK MONITORING
+-----------------------
+Network Monitoring Tools Used:
+- SolarWinds: for monitoring server and network device health
+- PRTG: for bandwidth monitoring and alerting
+- Wireshark: for packet capture and deep network analysis (Level 2 and above only)
+
+Checking Network Device Status:
+1. Log into SolarWinds at monitoring.techcore.com
+2. Username: it-admin | Password: Contact IT Manager
+3. View the network map to see all devices and their status
+4. Green = Online, Red = Offline, Yellow = Warning
+5. Click on any device for detailed performance metrics
+
+Common Network Alerts and Actions:
+- High bandwidth alert (above 80%): Check for bandwidth-consuming processes or traffic spikes
+- Device offline alert: Physically check the device and restart if accessible
+- High latency alert (above 100ms): Check for congestion on that network segment
+- Packet loss alert (above 1%): Check cables, switch ports, and network hardware
+
+11. NETWORK EQUIPMENT
+----------------------
+Core Network Equipment at TechCore Solutions:
+
+Main Router: Cisco ISR 4331
+- Location: Server Room Rack 1
+- Management IP: 192.168.1.254
+- Access: Console cable or SSH
+
+Core Switch: Cisco Catalyst 9300
+- Location: Server Room Rack 2
+- Management IP: 192.168.1.253
+- VLANs configured: 10 (Management), 20 (Staff), 30 (Servers), 40 (Guest)
+
+Wireless Controller: Cisco WLC 3504
+- Location: Server Room Rack 1
+- Management IP: 192.168.1.252
+- Access Points: 12 units across the office
+- SSID Management: All access point configuration managed centrally through controller
+
+Firewall: Fortinet FortiGate 100F
+- Location: Server Room Rack 1
+- Management IP: 192.168.1.1
+- Web interface: https://192.168.1.1
+- Only Level 3 engineers are authorised to make firewall changes
+
+12. VLAN CONFIGURATION
+-----------------------
+VLAN Overview:
+VLAN 10 - Management: 10.0.10.x - IT infrastructure management traffic
+VLAN 20 - Staff: 192.168.20.x - All regular staff devices
+VLAN 30 - Servers: 10.0.30.x - All company servers
+VLAN 40 - Guest: 192.168.40.x - Guest and visitor Wi-Fi devices
+VLAN 50 - VoIP: 10.0.50.x - All IP phones and telephony devices
+VLAN 60 - CCTV: 10.0.60.x - Security cameras and NVR systems
+
+Adding a Device to Correct VLAN:
+1. Identify which VLAN the device should be on based on its role
+2. Connect to the switch management interface
+3. Navigate to the switch port the device is connected to
+4. Configure the port as an access port with the correct VLAN
+5. For IP phones, configure the port with both data VLAN and voice VLAN
+
+================================================================
+END OF DOCUMENT
+For network emergencies contact: network-team@techcore.com | Ext: 1003
+================================================================

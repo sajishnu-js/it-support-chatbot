@@ -1,8 +1,16 @@
 import threading
 import uvicorn
+from backend import app as fastapi_app
+import os
 import requests
 import streamlit as st
-from backend import app as fastapi_app
+from ingest import ingest_documents
+
+# Auto-build vectorstore if it doesn't exist
+# This runs automatically on Streamlit Cloud first startup
+if not os.path.exists("vectorstore/index.faiss"):
+    with st.spinner("Building knowledge base for first time... please wait 2 minutes..."):
+        ingest_documents()
 
 if "api_started" not in st.session_state:
     thread = threading.Thread(

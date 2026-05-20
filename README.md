@@ -3,7 +3,7 @@
 An AI-powered IT Support Assistant built using Retrieval Augmented Generation (RAG). Ask any IT support question and get instant, accurate answers sourced directly from company knowledge base documents.
 
 ## 🔗 Live Demo
-👉 [Try the live app here]() 
+👉 [Try the live app here](https://it-support-chatbot-fgafzd95dcayvhrtyypopp.streamlit.app) 
 
 ---
 

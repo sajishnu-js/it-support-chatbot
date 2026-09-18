@@ -125,33 +125,56 @@ function buildPrompt(context: string, question: string, strictMode: boolean): st
   return template.replace("{context}", context).replace("{question}", question);
 }
 
+const RETRY_STATUSES = new Set([429, 500, 502, 503, 504]);
+const MAX_ATTEMPTS = 4;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Gemini's free tier returns 503 "high demand" and 429 quota errors often
+ * enough that a single attempt fails visibly for users. Retry the transient
+ * ones with backoff, kept short so we stay inside the function's time budget. */
+async function fetchWithRetry(url: string, init: RequestInit, label: string): Promise<Response> {
+  let lastMessage = "";
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const res = await fetch(url, init);
+    if (res.ok) return res;
+
+    const detail = await res.text();
+    try {
+      lastMessage = JSON.parse(detail)?.error?.message || `${res.status}`;
+    } catch {
+      lastMessage = `${res.status}`;
+    }
+
+    if (!RETRY_STATUSES.has(res.status) || attempt === MAX_ATTEMPTS - 1) {
+      throw new Error(`${label}: ${lastMessage}`);
+    }
+    await sleep(700 * 2 ** attempt);
+  }
+
+  throw new Error(`${label}: ${lastMessage}`);
+}
+
 async function callGemini(path: string, body: unknown, stream = false): Promise<Response> {
   const key = requireApiKey();
   const method = stream ? "streamGenerateContent?alt=sse&" : "generateContent?";
-  const res = await fetch(`${GENERATIVE_API}/${path}:${method}key=${key}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const detail = await res.text();
-    let message = `${res.status}`;
-    try {
-      message = JSON.parse(detail)?.error?.message || message;
-    } catch {
-      // non-JSON error body — keep the status code
-    }
-    throw new Error(`Error calling model '${getModel()}': ${message}`);
-  }
-  return res;
+  return fetchWithRetry(
+    `${GENERATIVE_API}/${path}:${method}key=${key}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+    `Error calling model '${getModel()}'`
+  );
 }
 
 /** Embeds the question with the same model and dimensionality used to build
  * the index, as a RETRIEVAL_QUERY so it lands in the documents' vector space. */
 async function embedQuery(question: string): Promise<number[]> {
   const key = requireApiKey();
-  const res = await fetch(
+  const res = await fetchWithRetry(
     `${GENERATIVE_API}/${EMBEDDING_MODEL}:embedContent?key=${key}`,
     {
       method: "POST",
@@ -161,12 +184,9 @@ async function embedQuery(question: string): Promise<number[]> {
         taskType: "RETRIEVAL_QUERY",
         outputDimensionality: index.dimensions,
       }),
-    }
+    },
+    "Failed to embed the question"
   );
-
-  if (!res.ok) {
-    throw new Error(`Failed to embed the question: ${res.status}`);
-  }
 
   const data = await res.json();
   const values: number[] = data.embedding.values;

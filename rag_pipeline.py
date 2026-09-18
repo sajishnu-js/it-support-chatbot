@@ -24,7 +24,7 @@ def load_vectorstore():
 
 def get_llm():
     return ChatGoogleGenerativeAI(
-        model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        model=os.getenv("GEMINI_MODEL", "gemini-flash-latest"),
         temperature=0,
         api_key=os.getenv("GEMINI_API_KEY"),
     )

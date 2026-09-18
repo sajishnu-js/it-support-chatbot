@@ -165,7 +165,7 @@ def health():
         "status": "ok",
         "vectorstore_ready": vectorstore_ready,
         "llm_provider": "gemini",
-        "llm_model": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        "llm_model": os.getenv("GEMINI_MODEL", "gemini-flash-latest"),
         "gemini_api_key_configured": os.getenv("GEMINI_API_KEY", "") not in _PLACEHOLDER_KEYS,
         "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
         "documents_count": len(docs),

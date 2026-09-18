@@ -8,8 +8,17 @@ import type {
   RelatedDocument,
 } from "@/lib/types";
 
+/** Where the RAG API lives.
+ *
+ * Unset (the deployed default) means same-origin `/api` — the Next.js route
+ * handlers in src/app/api, which run the RAG pipeline against a pre-built
+ * Gemini embedding index. Set NEXT_PUBLIC_API_URL to point at the Python
+ * FastAPI backend instead; frontend/.env.local does this for local dev.
+ *
+ * Inlined at build time, so changing it requires a rebuild, not a restart.
+ */
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "/api";
 
 export class ApiError extends Error {
   status?: number;

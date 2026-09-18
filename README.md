@@ -92,7 +92,29 @@ Open `http://localhost:3000`.
 
 ## ☁️ Deploying
 
-The frontend and backend deploy as two separate services (e.g. Vercel + Render/Railway/Fly.io, or any Docker host). A few things that matter in production but not in local dev:
+There are two supported deployment modes.
+
+### Mode 1 — Vercel only (serverless, no separate backend)
+
+This is what the live deployment uses. Vercel cannot run `backend.py`: torch, FAISS and sentence-transformers together blow past the serverless bundle limit. Instead the Next.js app serves the RAG pipeline itself from `frontend/src/app/api/*`, backed by a **pre-built embedding index** committed at `frontend/src/data/kb-index.json`.
+
+```bash
+./venv/bin/python build_kb_index.py   # re-run whenever documents/ changes
+cd frontend && npx vercel --prod
+```
+
+`build_kb_index.py` chunks `documents/` with exactly the same splitter as `ingest.py`, but embeds with the Gemini embedding API rather than a local model — so the API route can embed the incoming question the same way and compare vectors directly, with no model weights at runtime. Searching 280 chunks by dot product in memory is faster than loading any index.
+
+What to set on Vercel:
+
+- **`GEMINI_API_KEY`** — server-side only. Never prefix it with `NEXT_PUBLIC_`, which would inline it into the browser bundle.
+- **Leave `NEXT_PUBLIC_API_URL` unset.** Unset means same-origin `/api`, which routes requests to the built-in pipeline; setting it points the UI at an external backend instead.
+
+Known limits of this mode, by design: **document upload, delete and reindex return HTTP 501**, because serverless instances have no writable disk — add documents locally, re-run `build_kb_index.py`, then redeploy. Analytics counters live in memory, so they reset when an instance is recycled and aren't shared across concurrent instances.
+
+### Mode 2 — split services (full feature set)
+
+Deploy the frontend and the Python backend as two services (e.g. Vercel + Render/Railway/Fly.io, or any Docker host). This keeps local embeddings, FAISS, and working document uploads; the backend needs roughly 1 GB of RAM for torch plus the embedding model. A few things that matter in production but not in local dev:
 
 - **`NEXT_PUBLIC_API_URL` is baked in at build time**, not read at runtime — it's a client-side var, so set it in your hosting platform *before* the build, pointing at your deployed backend's public URL. Changing it later requires a rebuild, not just a restart.
 - **`CORS_ORIGINS` on the backend must list your deployed frontend's real origin** (comma-separated for multiple), e.g. `CORS_ORIGINS=https://your-app.vercel.app`. The `http://localhost:3000` default only works locally.

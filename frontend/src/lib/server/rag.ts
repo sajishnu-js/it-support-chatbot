@@ -14,7 +14,14 @@
 import kbIndex from "@/data/kb-index.json";
 import type { CategoryKey, KnowledgeDocument, KnowledgeSource, RelatedDocument } from "@/lib/types";
 
-const GENERATIVE_API = "https://generativelanguage.googleapis.com/v1beta/models";
+/** Gemini exposes models unevenly across API versions — some live only on v1,
+ * some only on v1beta — and the free tier counts its request quota per model.
+ * Making both configurable is what lets a deployment move to a model that still
+ * has headroom without a code change. Embeddings stay on v1beta, which is the
+ * only version that serves gemini-embedding-001. */
+const GENERATION_API =
+  `https://generativelanguage.googleapis.com/${process.env.GEMINI_API_VERSION || "v1beta"}/models`;
+const EMBEDDING_API = "https://generativelanguage.googleapis.com/v1beta/models";
 const RELATED_DOCS_LIMIT = 3;
 const SNIPPET_LENGTH = 280;
 
@@ -156,11 +163,27 @@ async function fetchWithRetry(url: string, init: RequestInit, label: string): Pr
   throw new Error(`${label}: ${lastMessage}`);
 }
 
+/** Raw generateContent call for callers that need a non-RAG request body —
+ * the agent loop sends tool declarations and multi-turn history. */
+export async function generateContent(body: unknown): Promise<GeminiResponse> {
+  const res = await callGemini(getModel(), body);
+  return res.json();
+}
+
+export interface GeminiPart {
+  text?: string;
+  functionCall?: { name: string; args: Record<string, unknown> };
+}
+
+export interface GeminiResponse {
+  candidates?: Array<{ content?: { parts?: GeminiPart[]; role?: string }; finishReason?: string }>;
+}
+
 async function callGemini(path: string, body: unknown, stream = false): Promise<Response> {
   const key = requireApiKey();
   const method = stream ? "streamGenerateContent?alt=sse&" : "generateContent?";
   return fetchWithRetry(
-    `${GENERATIVE_API}/${path}:${method}key=${key}`,
+    `${GENERATION_API}/${path}:${method}key=${key}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -175,7 +198,7 @@ async function callGemini(path: string, body: unknown, stream = false): Promise<
 async function embedQuery(question: string): Promise<number[]> {
   const key = requireApiKey();
   const res = await fetchWithRetry(
-    `${GENERATIVE_API}/${EMBEDDING_MODEL}:embedContent?key=${key}`,
+    `${EMBEDDING_API}/${EMBEDDING_MODEL}:embedContent?key=${key}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

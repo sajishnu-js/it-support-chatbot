@@ -1,4 +1,5 @@
 import type {
+  AgentEvent,
   AnalyticsSummary,
   AskResponse,
   HealthStatus,
@@ -243,4 +244,67 @@ export async function askStream(
   if (!gotTerminalEvent) {
     onError("The connection ended before a response was completed.");
   }
+}
+
+/** Streams the AI Agent's triage run.
+ *
+ * Always same-origin: the agent loop lives only in the Next.js route handlers,
+ * so it must not follow API_BASE_URL when that points at the Python backend.
+ */
+export async function runAgentStream(
+  issue: string,
+  { onEvent, onError, signal }: {
+    onEvent: (event: AgentEvent) => void;
+    onError: (message: string) => void;
+    signal?: AbortSignal;
+  }
+): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch("/api/agent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ issue }),
+      signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return;
+    onError("Unable to reach the agent service.");
+    return;
+  }
+
+  if (!res.ok || !res.body) {
+    onError(`The agent service returned an error (${res.status}).`);
+    return;
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let sawTerminal = false;
+
+  const handle = (line: string) => {
+    if (!line.trim()) return;
+    try {
+      const event = JSON.parse(line) as AgentEvent;
+      if (event.type === "final" || event.type === "error") sawTerminal = true;
+      onEvent(event);
+    } catch {
+      // partial line — the next read completes it
+    }
+  };
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (value) {
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) handle(line);
+    }
+    if (done) break;
+  }
+  if (buffer) handle(buffer);
+
+  if (!sawTerminal) onError("The agent run ended before producing a triage.");
 }

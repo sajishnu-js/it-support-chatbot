@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
+  Bot,
   ChevronDown,
   Compass,
   Database,
@@ -46,6 +47,7 @@ import { useChatStore } from "@/lib/store/chat-store";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
+  { href: "/agent", label: "AI Agent", icon: Bot },
   { href: "/knowledge-base", label: "Knowledge Base", icon: Database },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },

@@ -109,6 +109,14 @@ What to set on Vercel:
 
 - **`GEMINI_API_KEY`** — server-side only. Never prefix it with `NEXT_PUBLIC_`, which would inline it into the browser bundle.
 - **Leave `NEXT_PUBLIC_API_URL` unset.** Unset means same-origin `/api`, which routes requests to the built-in pipeline; setting it points the UI at an external backend instead.
+- **`GEMINI_MODEL`** (optional, default `gemini-flash-latest`) and **`GEMINI_API_VERSION`** (optional, default `v1beta`). Gemini serves some models only on `v1` and others only on `v1beta` — `gemini-3.6-flash`, for example, is `v1`-only — so both are configurable together.
+
+> **Free-tier quota is the binding constraint.** Gemini's free tier allows
+> **20 generate requests per day, per model** (`GenerateRequestsPerDayPerProjectPerModel`).
+> A chat answer costs 1 request; an **AI Agent run costs 4-5**, because every
+> step of its loop is a separate call. That is roughly 4 agent runs per day.
+> The quota is counted per model, so switching `GEMINI_MODEL` (with the matching
+> `GEMINI_API_VERSION`) gives a fresh allowance — enable billing for real use.
 
 Known limits of this mode, by design: **document upload, delete and reindex return HTTP 501**, because serverless instances have no writable disk — add documents locally, re-run `build_kb_index.py`, then redeploy. Analytics counters live in memory, so they reset when an instance is recycled and aren't shared across concurrent instances.
 
@@ -158,8 +166,38 @@ What should I do if my computer has malware?
 
 ---
 
+## 🤖 AI Agent
+
+The **AI Agent** page is a different mode of operation from the chat. Chat is a
+single retrieve-then-answer pass; the agent runs a real tool-calling loop —
+Gemini decides what to look up, issues its own Knowledge Base searches, reads
+the passages, and searches again if the picture is incomplete.
+
+It has three tools: `search_knowledge_base`, `list_knowledge_base`, and
+`submit_triage`. The final result comes back through the `submit_triage` tool
+rather than being parsed out of prose, so the shape is guaranteed:
+
+| Field | Meaning |
+|---|---|
+| `severity` | P1 critical · P2 high · P3 normal · P4 low, with a stated rationale |
+| `category` | One of the eight Knowledge Base categories |
+| `summary` | What the issue actually is |
+| `resolution_steps` | Ordered, concrete steps grounded in retrieved passages |
+| `escalation` | When and where to escalate |
+| `cited_documents` | Filtered to documents the agent genuinely retrieved |
+
+The UI streams the investigation as it happens — every row in the trace is a
+real model turn or tool execution, never a scripted animation — and the triage
+can be copied as ticket text. Two behaviours worth knowing: the agent is
+**forced to conclude** after three searches (left alone it will keep re-phrasing
+queries indefinitely), and a citation can never name a document that did not
+appear in its search results.
+
+---
+
 ## 🔒 Key features
 
+- **Autonomous triage agent** — multi-step tool-calling loop with a visible investigation trace and severity-rated output
 - **Grounded answers, streamed token-by-token** — Gemini only answers from indexed documents by default; no hallucination
 - **Source citations** — every answer shows which document (and how relevant it was) it came from, with an expandable preview
 - **Honest fallback** — redirects to the helpdesk when the answer isn't in the documents

@@ -100,3 +100,26 @@ export interface Conversation {
   createdAt: string;
   updatedAt: string;
 }
+
+// ---------------------------------------------------------------- AI Agent
+
+export type TriageSeverity = "P1" | "P2" | "P3" | "P4";
+
+export interface AgentTriage {
+  summary: string;
+  severity: TriageSeverity;
+  severity_reason: string;
+  category: string;
+  resolution_steps: string[];
+  escalation: string;
+  cited_documents: string[];
+}
+
+/** One observable step of the agent loop. Every variant corresponds to a real
+ * model turn or tool execution — nothing here is emitted for show. */
+export type AgentEvent =
+  | { type: "thinking"; step: number; text: string }
+  | { type: "tool_call"; step: number; name: string; detail: string }
+  | { type: "tool_result"; step: number; name: string; summary: string; sources: KnowledgeSource[] }
+  | { type: "final"; triage: AgentTriage }
+  | { type: "error"; message: string };

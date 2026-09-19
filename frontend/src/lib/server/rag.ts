@@ -54,8 +54,20 @@ export const EMBEDDING_MODEL = index.embedding_model;
 export const CHUNK_SIZE = index.chunk_size;
 export const CHUNK_OVERLAP = index.chunk_overlap;
 
+/** Fields are listed explicitly so the stored `text` cannot leak into a
+ * response by accident — adding a field to the index does not silently start
+ * shipping it to the browser. */
 export function getDocuments(): KnowledgeDocument[] {
-  return index.documents.map(({ text: _text, ...doc }) => doc);
+  return index.documents.map((doc) => ({
+    filename: doc.filename,
+    ext: doc.ext,
+    category: doc.category,
+    size: doc.size,
+    modified_at: doc.modified_at,
+    status: doc.status,
+    chunk_count: doc.chunk_count,
+    indexed_at: doc.indexed_at,
+  }));
 }
 
 export function getDocumentText(filename: string): string | null {
@@ -132,14 +144,27 @@ function buildPrompt(context: string, question: string, strictMode: boolean): st
   return template.replace("{context}", context).replace("{question}", question);
 }
 
-const RETRY_STATUSES = new Set([429, 500, 502, 503, 504]);
+/** Server-side hiccups worth retrying. 429 is deliberately excluded: the free
+ * tier's rate limit asks for a ~35s wait, far longer than a serverless request
+ * can hold, and every retry consumes another request from the very quota that
+ * is exhausted — turning one failed answer into four. It is surfaced at once
+ * with a message the user can act on instead. */
+const RETRY_STATUSES = new Set([500, 502, 503, 504]);
 const MAX_ATTEMPTS = 4;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Gemini's free tier returns 503 "high demand" and 429 quota errors often
- * enough that a single attempt fails visibly for users. Retry the transient
- * ones with backoff, kept short so we stay inside the function's time budget. */
+/** Rewrites Gemini's rate-limit prose into something a user can act on. */
+function friendlyMessage(status: number, raw: string): string {
+  if (status !== 429) return raw;
+  const retryAfter = raw.match(/retry in ([\d.]+)s/i)?.[1];
+  const wait = retryAfter ? ` Try again in about ${Math.ceil(Number(retryAfter))} seconds.` : "";
+  return `Gemini's free-tier rate limit was reached.${wait} Each request counts against a limit of 20; an agent run uses several.`;
+}
+
+/** Gemini's free tier returns 503 "high demand" often enough that a single
+ * attempt fails visibly for users, so those are retried with backoff — kept
+ * short to stay inside the function's time budget. */
 async function fetchWithRetry(url: string, init: RequestInit, label: string): Promise<Response> {
   let lastMessage = "";
 
@@ -148,11 +173,13 @@ async function fetchWithRetry(url: string, init: RequestInit, label: string): Pr
     if (res.ok) return res;
 
     const detail = await res.text();
+    let raw: string;
     try {
-      lastMessage = JSON.parse(detail)?.error?.message || `${res.status}`;
+      raw = JSON.parse(detail)?.error?.message || `${res.status}`;
     } catch {
-      lastMessage = `${res.status}`;
+      raw = `${res.status}`;
     }
+    lastMessage = friendlyMessage(res.status, raw);
 
     if (!RETRY_STATUSES.has(res.status) || attempt === MAX_ATTEMPTS - 1) {
       throw new Error(`${label}: ${lastMessage}`);

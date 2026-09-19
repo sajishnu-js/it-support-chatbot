@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { useAgentConfigStore } from "@/lib/store/agent-config-store";
 import { useChatStore } from "@/lib/store/chat-store";
 import { useUiPrefsStore } from "@/lib/store/ui-prefs-store";
 
@@ -11,6 +12,7 @@ export function StoreHydrator() {
   useEffect(() => {
     void useChatStore.persist.rehydrate();
     void useUiPrefsStore.persist.rehydrate();
+    void useAgentConfigStore.persist.rehydrate();
   }, []);
 
   return null;

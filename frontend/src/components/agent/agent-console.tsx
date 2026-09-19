@@ -4,11 +4,13 @@ import { Bot, Send, Square } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { AgentConfigPanel } from "@/components/agent/agent-config-panel";
 import { AgentTrace } from "@/components/agent/agent-trace";
 import { TriageResult } from "@/components/agent/triage-result";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { runAgentStream } from "@/lib/api";
+import { useAgentConfigStore } from "@/lib/store/agent-config-store";
 import type { AgentEvent, AgentTriage } from "@/lib/types";
 
 const EXAMPLES = [
@@ -24,6 +26,9 @@ export function AgentConsole() {
   const [triage, setTriage] = useState<AgentTriage | null>(null);
   const [running, setRunning] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const role = useAgentConfigStore((s) => s.role);
+  const guardrails = useAgentConfigStore((s) => s.guardrails);
+  const maxSearches = useAgentConfigStore((s) => s.maxSearches);
 
   const start = async (text: string) => {
     const trimmed = text.trim();
@@ -36,7 +41,7 @@ export function AgentConsole() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    await runAgentStream(trimmed, {
+    await runAgentStream(trimmed, { role, guardrails, maxSearches }, {
       signal: controller.signal,
       onEvent: (event) => {
         if (event.type === "final") {
@@ -63,6 +68,8 @@ export function AgentConsole() {
 
   return (
     <div className="flex flex-col gap-5">
+      <AgentConfigPanel disabled={running} />
+
       <div className="glass-panel rounded-xl p-4">
         <label htmlFor="agent-issue" className="text-sm font-medium">
           Describe the issue

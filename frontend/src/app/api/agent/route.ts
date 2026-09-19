@@ -1,4 +1,4 @@
-import { runAgent } from "@/lib/server/agent";
+import { resolveConfig, runAgent } from "@/lib/server/agent";
 
 export const maxDuration = 60;
 
@@ -7,6 +7,9 @@ export const maxDuration = 60;
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const issue: string = (body.issue ?? "").trim();
+  // Sanitised server-side: the config is client-supplied, so lengths are capped
+  // and the search budget clamped before it can reach the model.
+  const config = resolveConfig(body.config);
 
   const encoder = new TextEncoder();
   const line = (obj: unknown) => encoder.encode(`${JSON.stringify(obj)}\n`);
@@ -24,7 +27,7 @@ export async function POST(request: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        for await (const event of runAgent(issue)) {
+        for await (const event of runAgent(issue, config)) {
           controller.enqueue(line(event));
         }
       } catch (error) {

@@ -12,59 +12,88 @@
  * of prose, which keeps the shape guaranteed instead of best-effort.
  */
 
+import {
+  AGENT_LIMITS,
+  DEFAULT_AGENT_GUARDRAILS,
+  DEFAULT_AGENT_ROLE,
+  DEFAULT_MAX_SEARCHES,
+} from "@/lib/agent-defaults";
 import { generateContent, getDocuments, retrieve } from "@/lib/server/rag";
 import type { GeminiPart } from "@/lib/server/rag";
-import type { AgentEvent, AgentTriage, TriageSeverity } from "@/lib/types";
+import type { AgentConfig, AgentEvent, AgentTriage, TriageSeverity } from "@/lib/types";
 
-/** Caps the loop so a model that keeps searching can't run up cost or hang the
- * request. Reaching it is reported honestly rather than faked into a result. */
-const MAX_STEPS = 6;
-/** After this many searches the model is *required* to call submit_triage.
- * Left to itself it will keep refining queries indefinitely — observed running
- * six searches on one issue without concluding — which wastes quota and
- * eventually times out. Forcing the call yields a triage from the evidence
- * already gathered instead of an apology about hitting a limit. */
-const FORCE_TRIAGE_AFTER_SEARCHES = 3;
+/** Once the configured search budget is spent the model is *required* to call
+ * submit_triage. Left to itself it will keep refining queries indefinitely —
+ * observed running six searches on one issue without concluding — which wastes
+ * quota and eventually times out. Forcing the call yields a triage from the
+ * evidence already gathered instead of an apology about hitting a limit.
+ * The step cap leaves room for the forced turn plus a retry. */
+const stepBudget = (maxSearches: number) => maxSearches + 3;
 const SEARCH_TOP_K = 4;
 const SNIPPET_LENGTH = 320;
 
 const SEVERITIES: TriageSeverity[] = ["P1", "P2", "P3", "P4"];
 
-const SYSTEM_INSTRUCTION = `
-You are the TechCore IT triage agent. You diagnose IT support issues using ONLY
-the organisation's Knowledge Base, which you access through tools.
-
+/** The one part of the prompt the user cannot edit. The loop terminates only
+ * when submit_triage is called, so if this were editable a user could write a
+ * prompt that makes the agent structurally unable to finish. Everything about
+ * *how* to triage stays configurable; only the protocol is fixed. */
+const TOOL_PROTOCOL = `
 How to work:
-1. Call search_knowledge_base to find material about the issue. Two or three
-   focused searches are usually enough — search the symptom, then the specific
-   procedure or policy involved. Do not keep re-phrasing the same query.
+1. Call search_knowledge_base to find material about the issue.
 2. Call list_knowledge_base if you need to know what documentation exists.
 3. When you have enough evidence, call submit_triage exactly once. Never answer
    in plain prose — the triage tool is the only way to finish.
-
-Rules:
-- Ground every resolution step in something a search actually returned. Do not
-  invent commands, URLs, portals, phone numbers or policy values.
-- If the Knowledge Base does not cover the issue, still submit a triage: say so
-  in the summary, keep resolution_steps minimal, and set escalation to direct
-  the user to the IT Helpdesk at helpdesk@techcore.com or extension 1001.
-- Severity: P1 = widespread outage or active security incident; P2 = a blocked
-  user or degraded shared service; P3 = a routine single-user request; P4 = a
-  question or minor inconvenience.
-- cited_documents must list only filenames that appeared in your search results.
 `.trim();
 
-/** The inventory is injected rather than left to a tool call. Every model turn
- * costs a request against a free-tier budget of 20 per day, and the agent was
- * reliably spending one just to ask what documents exist — which is static and
- * cheap to hand over upfront. list_knowledge_base stays available for the rare
- * case it wants to re-check. */
-function systemInstruction(): string {
+/** Builds the system instruction from the user's configuration.
+ *
+ * The document inventory is injected rather than left to a tool call: every
+ * model turn costs a request against a free-tier budget of 20 per day, and the
+ * agent reliably spent one just asking what documents exist — static
+ * information that is cheap to hand over upfront.
+ */
+export function systemInstruction(config: ResolvedConfig): string {
   const inventory = getDocuments()
     .map((doc) => `- ${doc.filename} (${doc.category}, ${doc.chunk_count} chunks)`)
     .join("\n");
 
-  return `${SYSTEM_INSTRUCTION}\n\nDocuments currently indexed:\n${inventory}`;
+  return [
+    config.role,
+    TOOL_PROTOCOL,
+    `Guardrails you must follow:\n${config.guardrails}`,
+    `Documents currently indexed:\n${inventory}`,
+  ].join("\n\n");
+}
+
+export interface ResolvedConfig {
+  role: string;
+  guardrails: string;
+  maxSearches: number;
+}
+
+/** Trusts nothing from the client: the config arrives over HTTP, so lengths are
+ * capped to protect the token budget and the search count is clamped because
+ * each search costs a scarce daily request. Blank fields fall back to the
+ * defaults rather than producing an agent with no instructions at all. */
+export function resolveConfig(raw: unknown): ResolvedConfig {
+  const input = (raw ?? {}) as Partial<AgentConfig>;
+
+  const text = (value: unknown, fallback: string, cap: number) => {
+    const trimmed = typeof value === "string" ? value.trim() : "";
+    return (trimmed || fallback).slice(0, cap);
+  };
+
+  const requested = Number(input.maxSearches);
+  const maxSearches = Number.isFinite(requested)
+    ? Math.min(AGENT_LIMITS.maxSearches, Math.max(AGENT_LIMITS.minSearches, Math.round(requested)))
+    : DEFAULT_MAX_SEARCHES;
+
+  return {
+    role: text(input.role, DEFAULT_AGENT_ROLE, AGENT_LIMITS.roleMaxLength),
+    guardrails: text(input.guardrails, DEFAULT_AGENT_GUARDRAILS, AGENT_LIMITS.guardrailsMaxLength),
+    maxSearches,
+  };
 }
 
 const TOOLS = [
@@ -180,16 +209,20 @@ function normaliseTriage(args: Record<string, unknown>, searched: Set<string>): 
   };
 }
 
-export async function* runAgent(issue: string): AsyncGenerator<AgentEvent> {
+export async function* runAgent(
+  issue: string,
+  config: ResolvedConfig
+): AsyncGenerator<AgentEvent> {
+  const maxSteps = stepBudget(config.maxSearches);
   const history: Turn[] = [{ role: "user", parts: [{ text: `IT issue to triage:\n${issue}` }] }];
   const searchedFilenames = new Set<string>();
   let searchCount = 0;
 
-  for (let step = 1; step <= MAX_STEPS; step++) {
-    const mustConclude = searchCount >= FORCE_TRIAGE_AFTER_SEARCHES || step === MAX_STEPS;
+  for (let step = 1; step <= maxSteps; step++) {
+    const mustConclude = searchCount >= config.maxSearches || step === maxSteps;
 
     const response = await generateContent({
-      systemInstruction: { parts: [{ text: systemInstruction() }] },
+      systemInstruction: { parts: [{ text: systemInstruction(config) }] },
       contents: history,
       tools: TOOLS,
       toolConfig: {
@@ -308,6 +341,6 @@ export async function* runAgent(issue: string): AsyncGenerator<AgentEvent> {
 
   yield {
     type: "error",
-    message: `The agent reached its ${MAX_STEPS}-step limit without submitting a triage. Try describing the issue more specifically.`,
+    message: `The agent reached its ${maxSteps}-step limit without submitting a triage. Try describing the issue more specifically.`,
   };
 }

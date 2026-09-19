@@ -105,6 +105,14 @@ export interface Conversation {
 
 export type TriageSeverity = "P1" | "P2" | "P3" | "P4";
 
+/** User-editable agent prompt. The tool protocol is appended server-side and
+ * is deliberately not part of this — the loop breaks without it. */
+export interface AgentConfig {
+  role: string;
+  guardrails: string;
+  maxSearches: number;
+}
+
 export interface AgentTriage {
   summary: string;
   severity: TriageSeverity;

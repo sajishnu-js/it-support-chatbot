@@ -186,6 +186,29 @@ rather than being parsed out of prose, so the shape is guaranteed:
 | `escalation` | When and where to escalate |
 | `cited_documents` | Filtered to documents the agent genuinely retrieved |
 
+### Configuring the agent
+
+The **Agent configuration** panel on that page is the prompt editor. Two free-text
+fields drive behaviour:
+
+- **Agent prompt** — who the agent is, how it should search, and how it should rate severity.
+- **Guardrails** — hard rules, sent as a separate, explicitly labelled section of the prompt.
+
+A **search budget** slider (1-5) sets how many Knowledge Base searches it may run
+before it must submit. Each step is a separate Gemini request, so this directly
+controls quota cost. Three presets — Default triage, Security-first and
+End-user friendly — fill both fields as starting points; everything stays editable.
+
+Configuration persists in the browser (`localStorage`) and travels with each run
+request, since serverless instances share no state. The server re-validates it:
+prompt lengths are capped and the search budget clamped, with blank fields
+falling back to defaults rather than producing an agent with no instructions.
+
+**One part of the prompt is not editable:** the tool protocol that tells the agent
+to finish by calling `submit_triage`. The loop terminates only on that call, so a
+prompt that removed it would leave the agent structurally unable to finish. It is
+appended server-side after your prompt and guardrails.
+
 The UI streams the investigation as it happens — every row in the trace is a
 real model turn or tool execution, never a scripted animation — and the triage
 can be copied as ticket text. Two behaviours worth knowing: the agent is

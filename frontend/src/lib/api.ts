@@ -1,4 +1,5 @@
 import type {
+  AgentConfig,
   AgentEvent,
   AnalyticsSummary,
   AskResponse,
@@ -253,6 +254,7 @@ export async function askStream(
  */
 export async function runAgentStream(
   issue: string,
+  config: AgentConfig,
   { onEvent, onError, signal }: {
     onEvent: (event: AgentEvent) => void;
     onError: (message: string) => void;
@@ -264,7 +266,7 @@ export async function runAgentStream(
     res = await fetch("/api/agent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ issue }),
+      body: JSON.stringify({ issue, config }),
       signal,
     });
   } catch (err) {
